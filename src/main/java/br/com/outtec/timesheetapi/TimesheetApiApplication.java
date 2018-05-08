@@ -24,9 +24,10 @@ public class TimesheetApiApplication {
 	public CommandLineRunner commandLineRunner() {
 		return args -> {
 			Timesheet time = new Timesheet();
-			time.setIsHoliday(true);
+			time.setIsHoliday(false);
 			time.setIsInTravel(false);
 			this.timeSheetRepository.save(time);
+			
 			System.out.println("Entrada " + time);
 			
 			
