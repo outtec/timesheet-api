@@ -27,7 +27,6 @@ public class TimesheetApiApplication {
 			time.setIsHoliday(false);
 			time.setIsInTravel(false);
 			this.timeSheetRepository.save(time);
-			
 			System.out.println("Entrada " + time);
 			
 			
