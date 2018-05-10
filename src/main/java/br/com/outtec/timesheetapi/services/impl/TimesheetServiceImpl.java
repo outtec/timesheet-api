@@ -14,13 +14,13 @@ import br.com.outtec.timesheetapi.services.TimesheetService;
 
 @Service
 public class TimesheetServiceImpl implements TimesheetService{
-	
+
 	private static final Logger log = LoggerFactory.getLogger(TimesheetServiceImpl.class);
- 
-	
+
+
 	@Autowired
 	private TimesheetRepository timesheetRepository;
-	
+
 
 	public Timesheet persist(Timesheet timesheet) {
 		log.info("Persistindo Timesheet: {}", timesheet);
@@ -29,9 +29,8 @@ public class TimesheetServiceImpl implements TimesheetService{
 
 	public Optional<Optional<Timesheet>> buscaPorID(Long id){
 		log.info("Buscando Timesheet por ID: {}", id);
-	return Optional.ofNullable(this.timesheetRepository.findById(id));
-		
-	}
+		return Optional.ofNullable(this.timesheetRepository.findById(id));
 
+	}
 
 }

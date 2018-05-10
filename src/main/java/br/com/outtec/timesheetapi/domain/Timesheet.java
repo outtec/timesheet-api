@@ -17,6 +17,7 @@ public class Timesheet implements Serializable{
 	private Date endDateTime;
 	private Boolean isHoliday;
 	private Boolean isInTravel;
+	private String periodDescription;
 	private Date dataAtualizacao;
 	private Date dataCriacao;
 	
@@ -53,7 +54,14 @@ public class Timesheet implements Serializable{
 	public void setIsInTravel(Boolean isInTravel) {
 		this.isInTravel = isInTravel;
 	}
-	
+
+	public String getPeriodDescription() {
+		return periodDescription;
+	}
+	public void setPeriodDescription(String periodDescription) {
+		this.periodDescription = periodDescription;
+	}
+
 	public Date getDataAtualizacao() {
 		return dataAtualizacao;
 	}
