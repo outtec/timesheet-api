@@ -1,6 +1,8 @@
 package br.com.outtec.timesheetapi.controllers;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -9,6 +11,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +25,8 @@ import br.com.outtec.timesheetapi.responses.Response;
 import br.com.outtec.timesheetapi.services.TimesheetService;
 
 @RestController
-@RequestMapping("api/v1/timesheets")
+@RequestMapping("api/v1")
+@CrossOrigin(origins = "*")
 public class TimesheetController {
 	
 	private static final Logger log = LoggerFactory.getLogger(TimesheetController.class);
@@ -31,6 +37,31 @@ public class TimesheetController {
 	public TimesheetController() {}
 	
 	/**
+	 * Retorna todos as entradas de Timehssets	
+	 * @return Timesheet
+	 */
+	@GetMapping("/timesheets")
+	public ResponseEntity<Response<ArrayList>> timesheets(){
+		Response<ArrayList> response = new Response<ArrayList>();
+		ArrayList listTimesheet = (ArrayList) timesheetService.retornaTimesheets();
+		response.setData(listTimesheet);
+		return ResponseEntity.ok(response);
+	}
+	
+	/**
+	 * Retorna uma entrada cadastrada por seu ID
+	 * @param id
+	 * @return Timesheet
+	 */
+	@GetMapping("/timesheets/{id}")
+	public ResponseEntity<Response<TimesheetDto>> getByID(@PathVariable("id") long id){
+		Response<TimesheetDto> response = new Response<TimesheetDto>();
+		Optional<Timesheet> timesheet = timesheetService.buscaPorID(id);
+		response.setData(this.converterTimesheetParaDto(timesheet.get()));
+		return ResponseEntity.ok(response);
+		
+	}
+	/**
 	 * Cadastra um período de horas por data
 	 * @param timesheetDto
 	 * @param result
@@ -38,7 +69,7 @@ public class TimesheetController {
 	 * @throws NoSuchAlgorithmException
 	 *
 	 * */
-	@PostMapping
+	@PostMapping("/timesheet")
 	public ResponseEntity<Response<TimesheetDto>> persist(@Valid @RequestBody TimesheetDto timesheetDto,
 			BindingResult result) throws NoSuchAlgorithmException{
 		
@@ -72,5 +103,17 @@ public class TimesheetController {
 		
 		return timesheet;
 	}
+	
+	private TimesheetDto converterTimesheetParaDto(Timesheet timesheet) {
+		TimesheetDto timesheetDto = new TimesheetDto();
+		timesheetDto.setEndDateTime(timesheet.getEndDateTime());
+		timesheetDto.setStartDateTime(timesheet.getStartDateTime());
+		timesheetDto.setIsHoliday(timesheet.getIsHoliday());
+		timesheetDto.setIsInTravel(timesheet.getIsInTravel());
+		timesheetDto.setPeriodDescription(timesheet.getPeriodDescription());
+
+		return timesheetDto;
+	}
+
 	
 }

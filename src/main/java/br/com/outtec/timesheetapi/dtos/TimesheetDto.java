@@ -1,6 +1,7 @@
 package br.com.outtec.timesheetapi.dtos;
 
 import java.util.Date;
+import java.util.Optional;
 
 import javax.validation.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Length;
@@ -53,7 +54,6 @@ public class TimesheetDto {
 	public void setIsInTravel(Boolean isInTravel) {
 		this.isInTravel = isInTravel;
 	}
-
 	@Length(min = 10, max = 500, message ="Descrição do Periodo deve conter entre 10 e 500 caracteres.")
 	public String getPeriodDescription() {
 		return periodDescription;
@@ -62,5 +62,6 @@ public class TimesheetDto {
 	public void setPeriodDescription(String periodDescription) {
 		this.periodDescription = periodDescription;
 	}
+
 
 }

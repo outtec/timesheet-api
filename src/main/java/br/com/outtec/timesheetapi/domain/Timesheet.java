@@ -21,6 +21,8 @@ public class Timesheet implements Serializable{
 	private Date dataAtualizacao;
 	private Date dataCriacao;
 	
+	public Timesheet(){}
+	
 	public Long getId() {
 		return id;
 	}

@@ -1,5 +1,6 @@
 package br.com.outtec.timesheetapi.services.impl;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -21,16 +22,22 @@ public class TimesheetServiceImpl implements TimesheetService{
 	@Autowired
 	private TimesheetRepository timesheetRepository;
 
-
 	public Timesheet persist(Timesheet timesheet) {
 		log.info("Persistindo Timesheet: {}", timesheet);
 		return this.timesheetRepository.save(timesheet);
 	}
 
-	public Optional<Optional<Timesheet>> buscaPorID(Long id){
+	public Optional<Timesheet> buscaPorID(Long id){
 		log.info("Buscando Timesheet por ID: {}", id);
-		return Optional.ofNullable(this.timesheetRepository.findById(id));
+		return this.timesheetRepository.findById(id);
 
 	}
+
+	public List<Timesheet> retornaTimesheets() {
+		List<Timesheet> List = timesheetRepository.findAll();
+		return List;
+
+	}
+
 
 }
