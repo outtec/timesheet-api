@@ -22,7 +22,7 @@ public class TimesheetServiceImpl implements TimesheetService{
 	@Autowired
 	private TimesheetRepository timesheetRepository;
 
-	public Timesheet persist(Timesheet timesheet) {
+	public Timesheet save(Timesheet timesheet) {
 		log.info("Persistindo Timesheet: {}", timesheet);
 		return this.timesheetRepository.save(timesheet);
 	}
@@ -37,6 +37,10 @@ public class TimesheetServiceImpl implements TimesheetService{
 		List<Timesheet> List = timesheetRepository.findAll();
 		return List;
 
+	}
+
+	public void delete(Long id) {
+		this.timesheetRepository.deleteById(id);
 	}
 
 

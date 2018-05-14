@@ -9,23 +9,29 @@ import br.com.outtec.timesheetapi.domain.Timesheet;
 public interface TimesheetService {
 	
 	/**
-	 * Save a new period of hours
+	 * Save a new hours period
 	 * @param timehsheet
 	 * @return Timesheet
 	 */
-	Timesheet persist(Timesheet timesheet);
+	Timesheet save(Timesheet timesheet);
 	
 	/**
-	 * Retorna uma entrada Timesheet por ID
+	 * Return a timesheet by ID
 	 * @param timesheet
 	 * @return Timesheet
 	 */
 	Optional<Timesheet> buscaPorID(Long id);
 	
 	/**
-	 * Lista de todas as entradas 
+	 * List all timesheets entrys
 	 * @return List<Timesheet>
 	 */
 	List<Timesheet> retornaTimesheets();
+	
+	/**
+	 * Delete a timesheet by ID
+	 * @param id
+	 */
+	void delete(Long id);
 
 }

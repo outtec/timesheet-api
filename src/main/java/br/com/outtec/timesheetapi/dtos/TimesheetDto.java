@@ -8,23 +8,25 @@ import org.hibernate.validator.constraints.Length;
 
 public class TimesheetDto {
 
-	private Long id;
+	private Optional<Long> id = Optional.empty();
 	private Date startDateTime;
 	private Date endDateTime;
 	private Boolean isHoliday;
 	private Boolean isInTravel;
 	private String periodDescription;
+	private String colaborador;
+	
 
 	public TimesheetDto() {}
 
-	public Long getId() {
+	public Optional<Long> getId() {
 		return id;
 	}
-	public void setId(Long id) {
+	public void setId(Optional<Long> id) {
 		this.id = id;
 	}
 
-	@NotEmpty(message = "A Data e hora de início do período não pode ser vazia")
+	//@NotEmpty(message = "A Data e hora de início do período não pode ser vazia")
 	public Date getStartDateTime() {
 		return startDateTime;
 	}
@@ -33,7 +35,7 @@ public class TimesheetDto {
 		this.startDateTime = startDateTime;
 	}
 
-	@NotEmpty(message = "A Data e hora final do período precisa ser informada")
+	//@NotEmpty(message = "A Data e hora final do período precisa ser informada")
 	public Date getEndDateTime() {
 		return endDateTime;
 	}
@@ -61,6 +63,15 @@ public class TimesheetDto {
 
 	public void setPeriodDescription(String periodDescription) {
 		this.periodDescription = periodDescription;
+	}
+	
+	@NotEmpty(message = "O nome do Colaborador deve ser informado")
+	public String getColaborador() {
+		return colaborador;
+	}
+
+	public void setColaborador(String colaborador) {
+		this.colaborador = colaborador;
 	}
 
 

@@ -1,4 +1,4 @@
-package br.com.outtec.timesheetapi.responses;
+package br.com.outtec.utils;
 
 import java.util.ArrayList;
 import java.util.List;
