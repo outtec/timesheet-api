@@ -1,5 +1,6 @@
 package br.com.outtec.timesheetapi.services.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,6 +43,9 @@ public class TimesheetServiceImpl implements TimesheetService{
 	public void delete(Long id) {
 		this.timesheetRepository.deleteById(id);
 	}
-
+	
+	public Optional<Timesheet> buscaPeriodoPorColaborador(Date startDateTime, Date endDateTime,String colaborador) {
+		return this.timesheetRepository.findByStartDateTimeAndEndDateTimeAndColaborador(startDateTime, endDateTime,colaborador);
+	}
 
 }

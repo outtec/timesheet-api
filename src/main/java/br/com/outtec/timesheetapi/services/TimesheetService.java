@@ -1,6 +1,7 @@
 package br.com.outtec.timesheetapi.services;
 
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,5 +34,12 @@ public interface TimesheetService {
 	 * @param id
 	 */
 	void delete(Long id);
-
+	
+	/**
+	 * 
+	 * @param startDateTime
+	 * @param endDateTime
+	 * @return Timesheet
+	 */
+	Optional<Timesheet> buscaPeriodoPorColaborador(Date startDateTime,Date endDateTime,String colaborador);
 }
