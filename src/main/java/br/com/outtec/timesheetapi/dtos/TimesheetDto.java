@@ -1,48 +1,45 @@
-package br.com.outtec.timesheetapi.domain;
+package br.com.outtec.timesheetapi.dtos;
 
-import java.io.Serializable;
 import java.util.Date;
+import java.util.Optional;
 
-import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import org.hibernate.validator.constraints.Length;
 
-import br.com.outtec.colaboradorapi.domain.Colaborador;
+public class TimesheetDto {
 
-
-@Entity
-public class Timesheet implements Serializable{
-
-	private static final long serialVersionUID = -2358695929722404342L;
-
-	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	private Long id;
+	private Optional<Long> id = Optional.empty();
 	private Date startDateTime;
 	private Date endDateTime;
 	private Boolean isHoliday;
 	private Boolean isInTravel;
 	private String periodDescription;
-	private Date dataAtualizacao;
-	private Date dataCriacao;
 	private String colaborador;
+	
 
-	public Timesheet(){}
-	public Long getId() {
+	public TimesheetDto() {}
+
+	public Optional<Long> getId() {
 		return id;
 	}
-	public void setId(Long id) {
+	public void setId(Optional<Long> id) {
 		this.id = id;
 	}
 
+	//@NotEmpty(message = "A Data e hora de início do período não pode ser vazia")
 	public Date getStartDateTime() {
 		return startDateTime;
 	}
+
 	public void setStartDateTime(Date startDateTime) {
 		this.startDateTime = startDateTime;
 	}
 
+	//@NotEmpty(message = "A Data e hora final do período precisa ser informada")
 	public Date getEndDateTime() {
 		return endDateTime;
 	}
+
 	public void setEndDateTime(Date endDateTime) {
 		this.endDateTime = endDateTime;
 	}
@@ -59,42 +56,20 @@ public class Timesheet implements Serializable{
 	public void setIsInTravel(Boolean isInTravel) {
 		this.isInTravel = isInTravel;
 	}
-
+	@Length(min = 10, max = 500, message ="Descrição do Periodo deve conter entre 10 e 500 caracteres.")
 	public String getPeriodDescription() {
 		return periodDescription;
 	}
+
 	public void setPeriodDescription(String periodDescription) {
 		this.periodDescription = periodDescription;
 	}
-
-	public Date getDataAtualizacao() {
-		return dataAtualizacao;
-	}
-	public void setDataAtualizacao(Date dataAtualizacao) {
-		this.dataAtualizacao = dataAtualizacao;
-	}
-	public Date getDataCriacao() {
-		return dataCriacao;
-	}
-	public void setDataCriacao(Date dataCriacao) {
-		this.dataCriacao = dataCriacao;
-	}
 	
-		
-	@PreUpdate
-	public void preUpdate() {
-		setDataAtualizacao(new Date());
-	}
-
-	@PrePersist
-	public void prePersist() {
-		final Date atual = new Date();
-		setDataCriacao(atual);
-		setDataAtualizacao(atual);
-	}
+	@NotEmpty(message = "O nome do Colaborador deve ser informado")
 	public String getColaborador() {
 		return colaborador;
 	}
+
 	public void setColaborador(String colaborador) {
 		this.colaborador = colaborador;
 	}
