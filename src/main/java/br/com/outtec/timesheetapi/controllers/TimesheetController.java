@@ -49,7 +49,7 @@ public class TimesheetController {
 	public ResponseEntity<Response<ArrayList>> timesheets(){
 		Response<ArrayList> response = new Response<ArrayList>();
 		log.info("Retorna lançamentos");
-		ArrayList listTimesheet = (ArrayList) timesheetService.retornaTimesheets();
+		ArrayList listTimesheet = (ArrayList) timesheetService.returnTimesheets();
 		response.setData(listTimesheet);
 		return ResponseEntity.ok(response);
 	}
@@ -63,7 +63,7 @@ public class TimesheetController {
 	public ResponseEntity<Response<TimesheetDto>> getByID(@PathVariable("id") long id){
 		log.info("Buscando lançamento por ID: {}", id);
 		Response<TimesheetDto> response = new Response<TimesheetDto>();
-		Optional<Timesheet> timesheet = timesheetService.buscaPorID(id);
+		Optional<Timesheet> timesheet = timesheetService.findByID(id);
 
 		//TRATAMENTO DE ERRO
 		if(!timesheet.isPresent()) {
@@ -82,7 +82,7 @@ public class TimesheetController {
 	 * @throws ParseException 
 	 *
 	 * */
-	@PostMapping("/timesheet")
+	@PostMapping("/timesheets")
 	public ResponseEntity<Response<TimesheetDto>> save(@Valid @RequestBody TimesheetDto timesheetDto,
 			BindingResult result) throws ParseException{
 		log.info("Adicionando lançamento: {}", timesheetDto.toString());
@@ -136,7 +136,7 @@ public class TimesheetController {
 	@DeleteMapping("/timesheets/{id}")
 	public ResponseEntity<Response<String>> delete(@PathVariable("id") Long id){
 		Response<String> response = new Response<String>();
-		Optional<Timesheet> timesheet = timesheetService.buscaPorID(id);
+		Optional<Timesheet> timesheet = timesheetService.findByID(id);
 
 		//TRATAERRO
 		if (!timesheet.isPresent()) {
@@ -154,7 +154,7 @@ public class TimesheetController {
 	 * @result timesheet
 	 */
 	private void verificaSeExisteLancamento(TimesheetDto timesheetDto, BindingResult result){
-	Optional<Timesheet> timesheet = this.timesheetService.buscaPeriodoPorColaborador(timesheetDto.getStartDateTime(), timesheetDto.getEndDateTime(),timesheetDto.getColaborador());
+	Optional<Timesheet> timesheet = this.timesheetService.findTimehseetByCollaborator(timesheetDto.getStartDateTime(), timesheetDto.getEndDateTime(),timesheetDto.getColaborador());
 	if (timesheet.isPresent()){
 		result.addError(new ObjectError("timesheet", "Já éxiste um período cadastrado com a Data de Entrada, Saída e Horários que foram fornecidos."));
 	}
@@ -165,7 +165,7 @@ public class TimesheetController {
 		Timesheet timesheet = new Timesheet();
 		
 		if (timesheetDto.getId().isPresent()){
-			Optional<Timesheet> ts = this.timesheetService.buscaPorID(timesheetDto.getId().get());
+			Optional<Timesheet> ts = this.timesheetService.findByID(timesheetDto.getId().get());
 			if(ts.isPresent()) {
 				timesheet = ts.get();
 			}else {

@@ -28,13 +28,13 @@ public class TimesheetServiceImpl implements TimesheetService{
 		return this.timesheetRepository.save(timesheet);
 	}
 
-	public Optional<Timesheet> buscaPorID(Long id){
+	public Optional<Timesheet> findByID(Long id){
 		log.info("Buscando Timesheet por ID: {}", id);
 		return this.timesheetRepository.findById(id);
 
 	}
 
-	public List<Timesheet> retornaTimesheets() {
+	public List<Timesheet> returnTimesheets() {
 		List<Timesheet> List = timesheetRepository.findAll();
 		return List;
 
@@ -44,8 +44,9 @@ public class TimesheetServiceImpl implements TimesheetService{
 		this.timesheetRepository.deleteById(id);
 	}
 	
-	public Optional<Timesheet> buscaPeriodoPorColaborador(Date startDateTime, Date endDateTime,String colaborador) {
+	public Optional<Timesheet> findTimehseetByCollaborator(Date startDateTime, Date endDateTime,String colaborador) {
 		return this.timesheetRepository.findByStartDateTimeAndEndDateTimeAndColaborador(startDateTime, endDateTime,colaborador);
 	}
+
 
 }

@@ -21,13 +21,13 @@ public interface TimesheetService {
 	 * @param timesheet
 	 * @return Timesheet
 	 */
-	Optional<Timesheet> buscaPorID(Long id);
+	Optional<Timesheet> findByID(Long id);
 	
 	/**
 	 * List all timesheets entrys
 	 * @return List<Timesheet>
 	 */
-	List<Timesheet> retornaTimesheets();
+	List<Timesheet> returnTimesheets();
 	
 	/**
 	 * Delete a timesheet by ID
@@ -41,5 +41,5 @@ public interface TimesheetService {
 	 * @param endDateTime
 	 * @return Timesheet
 	 */
-	Optional<Timesheet> buscaPeriodoPorColaborador(Date startDateTime,Date endDateTime,String colaborador);
+	Optional<Timesheet> findTimehseetByCollaborator(Date startDateTime,Date endDateTime,String colaborador);
 }
