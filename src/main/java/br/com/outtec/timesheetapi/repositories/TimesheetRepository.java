@@ -12,7 +12,12 @@ import br.com.outtec.timesheetapi.domain.Timesheet;
 public interface TimesheetRepository extends JpaRepository<Timesheet,Long>  {
 
 	Timesheet findBystartDateTime(Date startDateTime);
+	
 	Timesheet findByendDateTime(Date endDateTime);
-	Optional<Timesheet> findByStartDateTimeAndEndDateTimeAndColaborador(Date endDateTime,Date startDateTime,String colaborador);
-	Timesheet findByColaborador(String colaborador);
-}
+	
+	Optional<Timesheet> findByStartDateTimeAndEndDateTimeAndCollaborator(Date endDateTime,Date startDateTime,String collaborator);
+	
+	Timesheet findByCollaborator(String collaborator);
+	
+	Optional<Timesheet> findByCollaboratorBetween(Date endDateTime,Date startDateTime);
+	}

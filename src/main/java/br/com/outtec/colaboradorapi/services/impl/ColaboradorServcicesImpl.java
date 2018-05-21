@@ -15,7 +15,6 @@ public class ColaboradorServcicesImpl implements ColaboradorService{
 	@Autowired
 	private ColaboradorRepository colaboradorRepository;
 
-	@Override
 	public Colaborador save(Colaborador colaborador) {
 		log.info("Persistindo Colaborador: {}", colaborador);
 		return colaboradorRepository.save(colaborador);

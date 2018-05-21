@@ -14,7 +14,7 @@ public class TimesheetDto {
 	private Boolean isHoliday;
 	private Boolean isInTravel;
 	private String periodDescription;
-	private String colaborador;
+	private String collaborator;
 	
 
 	public TimesheetDto() {}
@@ -66,13 +66,12 @@ public class TimesheetDto {
 	}
 	
 	@NotEmpty(message = "O nome do Colaborador deve ser informado")
-	public String getColaborador() {
-		return colaborador;
+	public String getCollaborator() {
+		return collaborator;
 	}
 
-	public void setColaborador(String colaborador) {
-		this.colaborador = colaborador;
+	public void setCollaborator(String collaborator) {
+		this.collaborator = collaborator;
 	}
-
 
 }

@@ -29,12 +29,12 @@ import br.com.outtec.timesheetapi.services.TimesheetService;
 import br.com.outtec.utils.Response;
 
 @RestController
-@RequestMapping("api/v1")
+@RequestMapping("api/v1/timesheets")
 @CrossOrigin(origins = "*")
 public class TimesheetController {
 
 	private static final Logger log = LoggerFactory.getLogger(TimesheetController.class);
-	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	
 	@Autowired
 	private TimesheetService timesheetService;
@@ -45,7 +45,7 @@ public class TimesheetController {
 	 * Retorna todos os lançamentos cadastrados
 	 * @return Timesheet
 	 */
-	@GetMapping("/timesheets")
+	@GetMapping("")
 	public ResponseEntity<Response<ArrayList>> timesheets(){
 		Response<ArrayList> response = new Response<ArrayList>();
 		log.info("Retorna lançamentos");
@@ -59,7 +59,7 @@ public class TimesheetController {
 	 * @param id
 	 * @return Timesheet
 	 */
-	@GetMapping("/timesheets/{id}")
+	@GetMapping("/{id}")
 	public ResponseEntity<Response<TimesheetDto>> getByID(@PathVariable("id") long id){
 		log.info("Buscando lançamento por ID: {}", id);
 		Response<TimesheetDto> response = new Response<TimesheetDto>();
@@ -82,23 +82,13 @@ public class TimesheetController {
 	 * @throws ParseException 
 	 *
 	 * */
-	@PostMapping("/timesheets")
-	public ResponseEntity<Response<TimesheetDto>> save(@Valid @RequestBody TimesheetDto timesheetDto,
+	@PostMapping("")
+	public Response<Timesheet> save(@Valid @RequestBody TimesheetDto timesheetDto,
 			BindingResult result) throws ParseException{
 		log.info("Adicionando lançamento: {}", timesheetDto.toString());
-		Response<TimesheetDto> response = new Response<TimesheetDto>();
-		verificaSeExisteLancamento(timesheetDto, result);
-		//TRATAERRO
-
-		if(result.hasErrors()) {
-			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
-			return ResponseEntity.badRequest().body(response);
-		}
 		//SALVANDO ENTRADA DE TIMESHEET
 		Timesheet timesheet = this.convertDtoParaTimesheet(timesheetDto, result);
-		timesheet = this.timesheetService.save(timesheet);
-		response.setData(this.converterTimesheetParaDto(timesheet));
-		return ResponseEntity.ok(response);
+		return this.timesheetService.save(timesheet);
 	}
 
 	/**
@@ -109,7 +99,7 @@ public class TimesheetController {
 	 * @return timsheet
 	 * @throws ParseException
 	 */
-	@PutMapping("/timesheets/{id}")
+	@PutMapping("/{id}")
 	public ResponseEntity<Response<TimesheetDto>> update(@PathVariable("id") Long id, @Valid @RequestBody TimesheetDto timesheetDto,
 			BindingResult result) throws ParseException{
 		Response<TimesheetDto> response = new Response<TimesheetDto>();
@@ -123,7 +113,7 @@ public class TimesheetController {
 			return ResponseEntity.badRequest().body(response);
 		}
 		//SALVANDO TIMEHSEET
-		timesheet = this.timesheetService.save(timesheet);
+		//timesheet = this.timesheetService.save(timesheet);
 		response.setData(this.converterTimesheetParaDto(timesheet));
 		return ResponseEntity.ok(response);
 	}
@@ -133,7 +123,7 @@ public class TimesheetController {
 	 * @param id
 	 * @return response
 	 */
-	@DeleteMapping("/timesheets/{id}")
+	@DeleteMapping("/{id}")
 	public ResponseEntity<Response<String>> delete(@PathVariable("id") Long id){
 		Response<String> response = new Response<String>();
 		Optional<Timesheet> timesheet = timesheetService.findByID(id);
@@ -147,23 +137,16 @@ public class TimesheetController {
 		this.timesheetService.delete(id);
 		return ResponseEntity.ok(new Response<String>());
 	}
-
 	/**
 	 * Verifica se já existe um lançamento com o mesmo período informado por colaborador.
 	 * @param timesheetDto
 	 * @result timesheet
 	 */
-	private void verificaSeExisteLancamento(TimesheetDto timesheetDto, BindingResult result){
-	Optional<Timesheet> timesheet = this.timesheetService.findTimehseetByCollaborator(timesheetDto.getStartDateTime(), timesheetDto.getEndDateTime(),timesheetDto.getColaborador());
-	if (timesheet.isPresent()){
-		result.addError(new ObjectError("timesheet", "Já éxiste um período cadastrado com a Data de Entrada, Saída e Horários que foram fornecidos."));
-	}
-	}
 	
 	//CONVERSÃO DOS DTOS
 	private Timesheet convertDtoParaTimesheet(TimesheetDto timesheetDto, BindingResult result) throws ParseException{
 		Timesheet timesheet = new Timesheet();
-		
+
 		if (timesheetDto.getId().isPresent()){
 			Optional<Timesheet> ts = this.timesheetService.findByID(timesheetDto.getId().get());
 			if(ts.isPresent()) {
@@ -177,7 +160,7 @@ public class TimesheetController {
 		timesheet.setIsHoliday(timesheetDto.getIsHoliday());
 		timesheet.setIsInTravel(timesheetDto.getIsInTravel());
 		timesheet.setPeriodDescription(timesheetDto.getPeriodDescription());
-		timesheet.setColaborador(timesheetDto.getColaborador());
+		timesheet.setCollaborator(timesheetDto.getCollaborator());
 		return timesheet;
 	}
 
@@ -188,7 +171,7 @@ public class TimesheetController {
 		timesheetDto.setIsHoliday(timesheet.getIsHoliday());
 		timesheetDto.setIsInTravel(timesheet.getIsInTravel());
 		timesheetDto.setPeriodDescription(timesheet.getPeriodDescription());
-		timesheetDto.setColaborador(timesheet.getColaborador());
+		timesheetDto.setCollaborator(timesheet.getCollaborator());
 		return timesheetDto;
 	} 
 

@@ -23,7 +23,7 @@ public class Timesheet implements Serializable{
 	private String periodDescription;
 	private Date dataAtualizacao;
 	private Date dataCriacao;
-	private String colaborador;
+	private String collaborator;
 
 	public Timesheet(){}
 	public Long getId() {
@@ -92,11 +92,11 @@ public class Timesheet implements Serializable{
 		setDataCriacao(atual);
 		setDataAtualizacao(atual);
 	}
-	public String getColaborador() {
-		return colaborador;
+	public String getCollaborator() {
+		return collaborator;
 	}
-	public void setColaborador(String colaborador) {
-		this.colaborador = colaborador;
+	public void setCollaborator(String collaborator) {
+		this.collaborator = collaborator;
 	}
 
 
