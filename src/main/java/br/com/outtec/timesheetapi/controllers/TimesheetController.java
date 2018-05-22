@@ -105,7 +105,10 @@ public class TimesheetController {
 		Response<TimesheetDto> response = new Response<TimesheetDto>();
 		timesheetDto.setId(Optional.of(id));
 		Timesheet timesheet = this.convertDtoParaTimesheet(timesheetDto, result);
-
+		if(this.timesheetService.findTimesheetByCollaborator(timesheet).isPresent()) {
+			response.getErrors().add("Já existe uma entrada cadastrada com os dados informados");
+			return ResponseEntity.badRequest().body(response);
+		};
 		//TRATAERRO
 		if(result.hasErrors()) {
 			log.error("Erro validando lançamento: {}", result.getAllErrors());
@@ -113,7 +116,7 @@ public class TimesheetController {
 			return ResponseEntity.badRequest().body(response);
 		}
 		//SALVANDO TIMEHSEET
-		//timesheet = this.timesheetService.save(timesheet);
+		this.timesheetService.save(timesheet);
 		response.setData(this.converterTimesheetParaDto(timesheet));
 		return ResponseEntity.ok(response);
 	}

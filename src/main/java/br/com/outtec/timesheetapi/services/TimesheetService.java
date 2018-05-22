@@ -1,15 +1,8 @@
 package br.com.outtec.timesheetapi.services;
 
-
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
-import org.apache.tomcat.jni.Time;
-import org.springframework.http.ResponseEntity;
-
 import br.com.outtec.timesheetapi.domain.Timesheet;
-import br.com.outtec.timesheetapi.dtos.TimesheetDto;
 import br.com.outtec.utils.Response;
 
 public interface TimesheetService {
@@ -39,14 +32,6 @@ public interface TimesheetService {
 	 * @param id
 	 */
 	void delete(Long id);
-	
-	
-	/**
-	 * 
-	 * @param startDateTime
-	 * @param endDateTime
-	 * @return
-	 */
-	Optional<Timesheet> findByTimesheetBetween(Date startDateTime,Date endDateTime);
-	
+
+	Optional<Timesheet> findTimesheetByCollaborator(Timesheet timesheet);
 }
