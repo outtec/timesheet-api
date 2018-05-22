@@ -1,6 +1,7 @@
 package br.com.outtec.timesheetapi.services.impl;
 
-import java.util.Date;
+
+import java.sql.Array;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 import br.com.outtec.timesheetapi.domain.Timesheet;
 import br.com.outtec.timesheetapi.repositories.TimesheetRepository;
 import br.com.outtec.timesheetapi.services.TimesheetService;
+import br.com.outtec.utils.Response;
+
 
 
 @Service
@@ -19,22 +22,34 @@ public class TimesheetServiceImpl implements TimesheetService{
 
 	private static final Logger log = LoggerFactory.getLogger(TimesheetServiceImpl.class);
 
-
 	@Autowired
 	private TimesheetRepository timesheetRepository;
 
-	public Timesheet save(Timesheet timesheet) {
-		log.info("Persistindo Timesheet: {}", timesheet);
-		return this.timesheetRepository.save(timesheet);
+	public Response<Timesheet> save(Timesheet timesheetRequest) {
+		Response<Timesheet> response = new Response<Timesheet>();
+		log.info("Persistindo Timesheet: {}", timesheetRequest);
+		
+		List<Timesheet> lancamentos = returnTimesheets();	
+		for (int i = 0; i < lancamentos.size(); i++) {
+			Timesheet timesheet = lancamentos.get(i);	
+			log.info("Lista: {}", timesheet.getCollaborator());	
+		}
+		if(findTimesheetByCollaborator(timesheetRequest).isPresent()){
+			response.getErrors().add("Já existe um período cadastrado com a Data de Entrada, Saída e Horários que foram fornecidos.");
+			return response;
+		}else {
+			this.timesheetRepository.save(timesheetRequest);
+			response.getErrors().add("Período salvo com sucesso");
+			return response;
+		}
 	}
 
-	public Optional<Timesheet> buscaPorID(Long id){
+	public Optional<Timesheet> findByID(Long id){
 		log.info("Buscando Timesheet por ID: {}", id);
 		return this.timesheetRepository.findById(id);
-
 	}
-
-	public List<Timesheet> retornaTimesheets() {
+	
+	public List<Timesheet> returnTimesheets() {
 		List<Timesheet> List = timesheetRepository.findAll();
 		return List;
 
@@ -44,8 +59,9 @@ public class TimesheetServiceImpl implements TimesheetService{
 		this.timesheetRepository.deleteById(id);
 	}
 	
-	public Optional<Timesheet> buscaPeriodoPorColaborador(Date startDateTime, Date endDateTime,String colaborador) {
-		return this.timesheetRepository.findByStartDateTimeAndEndDateTimeAndColaborador(startDateTime, endDateTime,colaborador);
-	}
+	public Optional<Timesheet> findTimesheetByCollaborator(Timesheet timesheet){
+		return this.timesheetRepository.findByStartDateTimeAndEndDateTimeAndCollaborator(timesheet.getStartDateTime(), timesheet.getEndDateTime(), timesheet.getCollaborator());
+		
+	};
 
 }
