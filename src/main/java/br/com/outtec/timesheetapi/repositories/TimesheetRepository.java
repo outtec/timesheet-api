@@ -18,5 +18,4 @@ public interface TimesheetRepository extends JpaRepository<Timesheet,Long>  {
 	
 	Optional<Timesheet> findByIdAndStartDateTimeAndEndDateTime(Long Id, Date endDateTime, Date startDateTime);
 
-	void save(Optional<Timesheet> ts);
 	}

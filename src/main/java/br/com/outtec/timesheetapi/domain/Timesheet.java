@@ -5,8 +5,6 @@ import java.util.Date;
 
 import javax.persistence.*;
 
-import br.com.outtec.colaboradorapi.domain.Colaborador;
-
 
 @Entity
 public class Timesheet implements Serializable{
