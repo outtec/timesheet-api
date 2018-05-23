@@ -5,9 +5,12 @@ import java.util.Date;
 
 import javax.persistence.*;
 
+import br.com.outtec.timesheetapi.enums.PerfilEnum;
+
 
 @Entity
 public class Timesheet implements Serializable{
+
 
 	private static final long serialVersionUID = -2358695929722404342L;
 
@@ -23,7 +26,10 @@ public class Timesheet implements Serializable{
 	private Date dataCriacao;
 	private String collaborator;
 
-	public Timesheet(){}
+	public Timesheet(){
+		
+	}
+	
 	public Long getId() {
 		return id;
 	}
@@ -96,6 +102,13 @@ public class Timesheet implements Serializable{
 	public void setCollaborator(String collaborator) {
 		this.collaborator = collaborator;
 	}
-
+	
+	@Override
+	public String toString() {
+		return "Timesheet [id=" + id + ", startDateTime=" + startDateTime + ", endDateTime=" + endDateTime
+				+ ", isHoliday=" + isHoliday + ", isInTravel=" + isInTravel + ", periodDescription=" + periodDescription
+				+ ", dataAtualizacao=" + dataAtualizacao + ", dataCriacao=" + dataCriacao + ", collaborator="
+				+ collaborator + "]";
+	}
 
 }
