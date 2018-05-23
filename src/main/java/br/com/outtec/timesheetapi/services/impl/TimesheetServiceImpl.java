@@ -1,7 +1,5 @@
 package br.com.outtec.timesheetapi.services.impl;
 
-
-import java.sql.Array;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +12,6 @@ import br.com.outtec.timesheetapi.domain.Timesheet;
 import br.com.outtec.timesheetapi.repositories.TimesheetRepository;
 import br.com.outtec.timesheetapi.services.TimesheetService;
 import br.com.outtec.utils.Response;
-
 
 
 @Service
