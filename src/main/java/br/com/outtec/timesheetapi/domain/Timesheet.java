@@ -13,6 +13,7 @@ public class Timesheet implements Serializable{
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
+	
 	private Date startDateTime;
 	private Date endDateTime;
 	private Boolean isHoliday;
@@ -20,23 +21,20 @@ public class Timesheet implements Serializable{
 	private String periodDescription;
 	private Date dataAtualizacao;
 	private Date dataCriacao;
-	
-	
 	private Collaborator collaborator;
-	
 
+	public Timesheet(){
+
+	}
+	
+	@ManyToOne(fetch = FetchType.EAGER)
 	public Collaborator getCollaborator() {
 		return collaborator;
 	}
-
 	public void setCollaborator(Collaborator collaborator) {
 		this.collaborator = collaborator;
 	}
 
-	public Timesheet(){
-		
-	}
-	
 	public Long getId() {
 		return id;
 	}
@@ -90,8 +88,8 @@ public class Timesheet implements Serializable{
 	public void setDataCriacao(Date dataCriacao) {
 		this.dataCriacao = dataCriacao;
 	}
-	
-		
+
+
 	@PreUpdate
 	public void preUpdate() {
 		setDataAtualizacao(new Date());
@@ -104,7 +102,7 @@ public class Timesheet implements Serializable{
 		setDataAtualizacao(atual);
 	}
 
-	
+
 	@Override
 	public String toString() {
 		return "Timesheet [id=" + id + ", startDateTime=" + startDateTime + ", endDateTime=" + endDateTime

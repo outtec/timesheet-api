@@ -17,9 +17,7 @@ public class Collaborator implements Serializable {
 	private String name;
 	private String password;
 	private PerfilEnum perfil;
-	
-	@OneToMany(mappedBy = "collaborator", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private List<Timesheet> timehseet;
+	private List<Timesheet> timehseets;
 
 	public Collaborator() {}
 
@@ -46,7 +44,7 @@ public class Collaborator implements Serializable {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
+	@Enumerated(EnumType.STRING)
 	public PerfilEnum getPerfil() {
 		return perfil;
 	}
@@ -54,14 +52,16 @@ public class Collaborator implements Serializable {
 	public void setPerfil(PerfilEnum perfil) {
 		this.perfil = perfil;
 	}
-
-	public List<Timesheet> getTimehseet() {
-		return timehseet;
+	@Access(AccessType.PROPERTY)
+	@OneToMany(targetEntity= Timesheet.class, mappedBy = "collaborator", fetch = FetchType.LAZY, cascade = CascadeType.ALL )
+	public List<Timesheet> getTimehseets() {
+		return timehseets;
 	}
 
-	public void setTimehseet(List<Timesheet> timehseet) {
-		this.timehseet = timehseet;
+	public void setTimehseets(List<Timesheet> timehseets) {
+		this.timehseets = timehseets;
 	}
+	
 	@Override
 	public String toString() {
 		return "Collaborator [Id=" + Id + ", name=" + name + ", password=" + password + ", perfil="

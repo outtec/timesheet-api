@@ -58,7 +58,6 @@ public class TimesheetServiceImpl implements TimesheetService{
 	
 	public Optional<Timesheet> findTimesheetByCollaborator(Timesheet timesheet){
 		return this.timesheetRepository.findByStartDateTimeAndEndDateTimeAndCollaborator(timesheet.getStartDateTime(), timesheet.getEndDateTime(), timesheet.getCollaborator());
-		
 	};
 
 }
