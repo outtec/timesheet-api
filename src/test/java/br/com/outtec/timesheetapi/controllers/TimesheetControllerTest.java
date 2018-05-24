@@ -78,7 +78,7 @@ public class TimesheetControllerTest {
 	private String getJsonRequestPost() throws JsonProcessingException {
 		TimesheetDto timesheetDto = new TimesheetDto();
 		timesheetDto.setId(null);
-		timesheetDto.setCollaborator(COLLABORATOR);
+	//	timesheetDto.setCollaborator(COLLABORATOR);
 	//	timesheetDto.setStartDateTime(DATA);
 	//	timesheetDto.setEndDateTime(DATA);
 		timesheetDto.setIsHoliday(false);
@@ -93,7 +93,7 @@ public class TimesheetControllerTest {
 	private Timesheet getTimesheetData() {
 		Timesheet timesheet = new Timesheet();
 		timesheet.setId(ID_TIMESHEET);
-		timesheet.setCollaborator(COLLABORATOR);
+		//timesheet.setCollaborator(COLLABORATOR);
 		//timesheet.setStartDateTime(DATA);
 		//timesheet.setEndDateTime(DATA);
 		timesheet.setIsHoliday(false);

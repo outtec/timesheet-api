@@ -2,11 +2,7 @@ package br.com.outtec.timesheetapi.domain;
 
 import java.io.Serializable;
 import java.util.Date;
-
 import javax.persistence.*;
-
-import br.com.outtec.timesheetapi.enums.PerfilEnum;
-
 
 @Entity
 public class Timesheet implements Serializable{
@@ -24,7 +20,18 @@ public class Timesheet implements Serializable{
 	private String periodDescription;
 	private Date dataAtualizacao;
 	private Date dataCriacao;
-	private String collaborator;
+	
+	
+	private Collaborator collaborator;
+	
+
+	public Collaborator getCollaborator() {
+		return collaborator;
+	}
+
+	public void setCollaborator(Collaborator collaborator) {
+		this.collaborator = collaborator;
+	}
 
 	public Timesheet(){
 		
@@ -96,12 +103,7 @@ public class Timesheet implements Serializable{
 		setDataCriacao(atual);
 		setDataAtualizacao(atual);
 	}
-	public String getCollaborator() {
-		return collaborator;
-	}
-	public void setCollaborator(String collaborator) {
-		this.collaborator = collaborator;
-	}
+
 	
 	@Override
 	public String toString() {

@@ -6,6 +6,8 @@ import java.util.Optional;
 import javax.validation.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Length;
 
+import br.com.outtec.timesheetapi.domain.Collaborator;
+
 public class TimesheetDto {
 
 	private Optional<Long> id = Optional.empty();
@@ -14,7 +16,7 @@ public class TimesheetDto {
 	private Boolean isHoliday;
 	private Boolean isInTravel;
 	private String periodDescription;
-	private String collaborator;
+	private Collaborator collaborator;
 	
 
 	public TimesheetDto() {}
@@ -66,11 +68,11 @@ public class TimesheetDto {
 	}
 	
 	@NotEmpty(message = "O nome do Colaborador deve ser informado")
-	public String getCollaborator() {
+	public Collaborator getCollaborator() {
 		return collaborator;
 	}
 
-	public void setCollaborator(String collaborator) {
+	public void setCollaborator(Collaborator collaborator) {
 		this.collaborator = collaborator;
 	}
 
