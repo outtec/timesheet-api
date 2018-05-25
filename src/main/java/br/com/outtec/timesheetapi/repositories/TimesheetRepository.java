@@ -21,9 +21,6 @@ import br.com.outtec.timesheetapi.domain.Timesheet;
 public interface TimesheetRepository extends JpaRepository<Timesheet,Long>  {
 
 
-
-	List<Timesheet> findByCollaboratorId(@Param("collaboratorId") Long collaboratorId);
-
 	Optional<Timesheet> findByStartDateTimeAndEndDateTimeAndCollaborator(Date endDateTime,Date startDateTime,Collaborator collaborator);
 	Optional<Timesheet> findByIdAndStartDateTimeAndEndDateTime(Long Id, Date endDateTime, Date startDateTime);
 

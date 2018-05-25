@@ -13,20 +13,22 @@ public class Collaborator implements Serializable {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	private Long Id;
+	private Long id;
 	private String name;
 	private String password;
 	private PerfilEnum perfil;
-	private List<Timesheet> timehseets;
+	
+	@OneToMany(targetEntity= Timesheet.class, mappedBy = "collaborator", fetch = FetchType.LAZY, cascade = CascadeType.ALL )
+	private List<Timesheet> timesheets;
 
 	public Collaborator() {}
 
 	public Long getId() {
-		return Id;
+		return id;
 	}
 
 	public void setId(Long id) {
-		Id = id;
+		id = id;
 	}
 
 	public String getName() {
@@ -52,19 +54,18 @@ public class Collaborator implements Serializable {
 	public void setPerfil(PerfilEnum perfil) {
 		this.perfil = perfil;
 	}
-	@Access(AccessType.PROPERTY)
-	@OneToMany(targetEntity= Timesheet.class, mappedBy = "collaborator", fetch = FetchType.LAZY, cascade = CascadeType.ALL )
-	public List<Timesheet> getTimehseets() {
-		return timehseets;
+
+	public List<Timesheet> gettimesheets() {
+		return timesheets;
 	}
 
-	public void setTimehseets(List<Timesheet> timehseets) {
-		this.timehseets = timehseets;
+	public void settimesheets(List<Timesheet> timesheets) {
+		this.timesheets = timesheets;
 	}
 	
 	@Override
 	public String toString() {
-		return "Collaborator [Id=" + Id + ", name=" + name + ", password=" + password + ", perfil="
+		return "Collaborator [Id=" + id + ", name=" + name + ", password=" + password + ", perfil="
 				+ perfil + "]";
 	}
 

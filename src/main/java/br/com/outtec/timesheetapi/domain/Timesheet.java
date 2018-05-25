@@ -21,13 +21,15 @@ public class Timesheet implements Serializable{
 	private String periodDescription;
 	private Date dataAtualizacao;
 	private Date dataCriacao;
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "collaborator_id")
 	private Collaborator collaborator;
 
 	public Timesheet(){
 
 	}
-	
-	@ManyToOne(fetch = FetchType.EAGER)
+
 	public Collaborator getCollaborator() {
 		return collaborator;
 	}
