@@ -10,8 +10,6 @@ import br.com.outtec.utils.PasswordUtils;
 
 @SpringBootApplication
 public class TimesheetApiApplication {
-	
-
 
 	public static void main(String[] args) {
 		SpringApplication.run(TimesheetApiApplication.class, args);
