@@ -1,11 +1,14 @@
 package br.com.outtec.timesheetapi.respositories;
 
+
 import static org.junit.Assert.assertEquals;
 
-import java.util.Date;
-import java.util.Optional;
+import java.security.NoSuchAlgorithmException;
 
-import org.junit.After;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,54 +16,80 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import br.com.outtec.timesheetapi.domain.Collaborator;
 import br.com.outtec.timesheetapi.domain.Timesheet;
+import br.com.outtec.timesheetapi.enums.PerfilEnum;
+import br.com.outtec.timesheetapi.repositories.CollaboratorRepository;
 import br.com.outtec.timesheetapi.repositories.TimesheetRepository;
-import junit.framework.Assert;
+import br.com.outtec.utils.PasswordUtils;
+
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 //@ActiveProfiles("test")
 public class TimesheetRespositoryTest {
-
+	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+	
 	@Autowired
 	private TimesheetRepository timehseetRepository;
 
-	private static final String COLABORADOR = "Joyce Aquino Lima";
-	//private static final Long ID_TIMESHEET = 1L;
-	private static final Date DATA_INICIAL = new Date();
-	private static final Date DATA_FINAL = new Date();
-	
+	@Autowired
+	private CollaboratorRepository collaboratorRepository;
 
-	Timesheet timesheet = new Timesheet();
-	@Before 
-	public void setUp() throws Exception{
-		
+	private long collabodatorId;
+	private long timesheetId;
+
+
+	@Before
+	public void setUp()throws Exception{
+		Collaborator collaborator =  this.collaboratorRepository.save(getCollaboratorData());
+		this.collabodatorId = collaborator.getId();
+
+		Timesheet timesheet = this.timehseetRepository.save(getTimesheetData(collaborator));
+		this.timesheetId = timesheet.getId();
+		this.timehseetRepository.save(getTimesheetData1(collaborator));
+	}
+	
+	
+	@Test
+	public void testfindByCollaboratorId() {
+		List<Timesheet> timesheets = this.timehseetRepository.findByCollaboratorId(collabodatorId);
+		System.out.println("TEST FUNC BY COLABORADOR");
+		System.out.println("Lançamentos do colaborador :" + timesheets.get(0).getCollaborator().getName());
+		System.out.println("------ Descrição dos Lançamentos ------");
+		System.out.println(timesheets.get(0).getPeriodDescription());
+		System.out.println(timesheets.get(1).getPeriodDescription());
+		assertEquals(2,timesheets.size());
+	}
+
+	private Timesheet getTimesheetData(Collaborator collaborator) {
+		Timesheet timesheet = new Timesheet();
+		timesheet.setCollaborator(collaborator);
 		timesheet.setStartDateTime(new Date());
 		timesheet.setEndDateTime(new Date());
-		//timesheet.setCollaborator("Joyce Aquino Lima");
 		timesheet.setIsHoliday(false);
-		timesheet.setIsInTravel(true);
-		timesheet.setPeriodDescription("TESTE UNITARIO TIMEHSEET");
-		this.timehseetRepository.save(timesheet);
-	} 
-
-
-	@After
-	public final void tearDown() {
-		this.timehseetRepository.deleteAll();
+		timesheet.setIsInTravel(false);
+		timesheet.setPeriodDescription("DESC TESTE 1 TESTANDO REPOSITORIO DO TIMEHSEET COM JUNIT");
+		return timesheet;
 	}
 
-	 
-	@Test 
-	public void testFindByIdAndStartDateTimeAndEndDateTime() {
-		Optional<Timesheet> aux = this.timehseetRepository.findByIdAndStartDateTimeAndEndDateTime(timesheet.getId(), DATA_INICIAL, DATA_FINAL);
-		assertEquals(timesheet, aux);
+	private Timesheet getTimesheetData1(Collaborator collaborator) {
+		Timesheet ts = new Timesheet();
+		ts.setCollaborator(collaborator);
+		ts.setStartDateTime(new Date());
+		ts.setEndDateTime(new Date());
+		ts.setIsHoliday(false);
+		ts.setIsInTravel(false);
+		ts.setPeriodDescription("T2 DESC TESTANDO REPOSITORIO DO TIMEHSEET COM JUNIT");
+		return ts;
 	}
 
-	@Test
-	public void testFindByColaborador() {
-		//Timesheet timehseet = this.timehseetRepository.findByCollaborator(COLABORADOR);
-		//assertEquals(COLABORADOR, timehseet.getCollaborator());
+	private Collaborator getCollaboratorData()throws NoSuchAlgorithmException{
+		Collaborator collaborator = new Collaborator();
+		collaborator.setName("Josenildo");
+		collaborator.setPassword(PasswordUtils.getBCrypt("Senha123"));
+		collaborator.setPerfil(PerfilEnum.ROLE_USER);
+		return collaborator;
 	}
 
 }

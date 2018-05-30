@@ -2,11 +2,8 @@ package br.com.outtec.timesheetapi.dtos;
 
 import java.util.Date;
 import java.util.Optional;
-
-import javax.validation.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Length;
 
-import br.com.outtec.timesheetapi.domain.Collaborator;
 
 public class TimesheetDto {
 
@@ -16,7 +13,7 @@ public class TimesheetDto {
 	private Boolean isHoliday;
 	private Boolean isInTravel;
 	private String periodDescription;
-	private Collaborator collaborator;
+	private Long collaboratorId;
 	
 
 	public TimesheetDto() {}
@@ -42,8 +39,8 @@ public class TimesheetDto {
 		return endDateTime;
 	}
 
-	public void setEndDateTime(Date endDateTime) {
-		this.endDateTime = endDateTime;
+	public void setEndDateTime(Date date) {
+		this.endDateTime = date;
 	}
 
 	public Boolean getIsHoliday() {
@@ -66,14 +63,15 @@ public class TimesheetDto {
 	public void setPeriodDescription(String periodDescription) {
 		this.periodDescription = periodDescription;
 	}
-	
-	@NotEmpty(message = "O nome do Colaborador deve ser informado")
-	public Collaborator getCollaborator() {
-		return collaborator;
+
+	public Long getCollaboratorId() {
+		return collaboratorId;
 	}
 
-	public void setCollaborator(Collaborator collaborator) {
-		this.collaborator = collaborator;
+	public void setCollaboratorId(Long collaboratorId) {
+		this.collaboratorId = collaboratorId;
 	}
+	
+
 
 }

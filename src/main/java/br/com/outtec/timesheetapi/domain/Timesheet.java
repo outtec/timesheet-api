@@ -1,12 +1,12 @@
 package br.com.outtec.timesheetapi.domain;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.persistence.*;
 
 @Entity
 public class Timesheet implements Serializable{
-
 
 	private static final long serialVersionUID = -2358695929722404342L;
 

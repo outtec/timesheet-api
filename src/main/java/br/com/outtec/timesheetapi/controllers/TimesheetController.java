@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.outtec.timesheetapi.domain.Collaborator;
 import br.com.outtec.timesheetapi.domain.Timesheet;
 import br.com.outtec.timesheetapi.dtos.TimesheetDto;
 import br.com.outtec.timesheetapi.services.TimesheetService;
@@ -82,14 +83,26 @@ public class TimesheetController {
 	 * @throws ParseException 
 	 *
 	 * */
-	@PostMapping("")
-	public Response<Timesheet> save(@Valid @RequestBody TimesheetDto timesheetDto,
-			BindingResult result) throws ParseException{
-		log.info("Adicionando lançamento: {}", timesheetDto.toString());
-		//SALVANDO ENTRADA DE TIMESHEET
-		Timesheet timesheet = this.convertDtoParaTimesheet(timesheetDto, result);
-		return this.timesheetService.save(timesheet);
-	}
+	 @PostMapping("") 
+	  public ResponseEntity<Response<TimesheetDto>> save(@Valid @RequestBody TimesheetDto timesheetDto, 
+	      BindingResult result) throws ParseException{ 
+	    log.info("Adicionando lançamento: {}", timesheetDto.toString()); 
+	    Response<TimesheetDto> response = new Response<TimesheetDto>(); 
+	   if(this.timesheetService.findByStartDateTimeAndEndDateTime(timesheetDto.getStartDateTime(),timesheetDto.getEndDateTime())!= null){
+		   response.getErrors().add("Já existe um lançamento cadastrado com esses parâmetros");
+		   return ResponseEntity.ok(response);
+	   }
+	    //TRATAERRO 
+	     if(result.hasErrors()) { 
+	      result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage())); 
+	      return ResponseEntity.badRequest().body(response); 
+	    } 
+	    //SALVANDO ENTRADA DE TIMESHEET 
+	    Timesheet timesheet = this.convertDtoParaTimesheet(timesheetDto, result); 
+	    timesheet = this.timesheetService.save(timesheet); 
+	    response.setData(this.converterTimesheetParaDto(timesheet)); 
+	    return ResponseEntity.ok(response); 
+	  } 
 
 	/**
 	 * Atualiza os dados de um período de horas
@@ -99,27 +112,27 @@ public class TimesheetController {
 	 * @return timsheet
 	 * @throws ParseException
 	 */
-	@PutMapping("/{id}")
-	public ResponseEntity<Response<TimesheetDto>> update(@PathVariable("id") Long id, @Valid @RequestBody TimesheetDto timesheetDto,
-			BindingResult result) throws ParseException{
-		Response<TimesheetDto> response = new Response<TimesheetDto>();
-		timesheetDto.setId(Optional.of(id));
-		Timesheet timesheet = this.convertDtoParaTimesheet(timesheetDto, result);
-		if(this.timesheetService.findTimesheetByCollaborator(timesheet).isPresent()) {
-			response.getErrors().add("Já existe uma entrada cadastrada com os dados informados");
-			return ResponseEntity.badRequest().body(response);
-		};
-		//TRATAERRO
-		if(result.hasErrors()) {
-			log.error("Erro validando lançamento: {}", result.getAllErrors());
-			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
-			return ResponseEntity.badRequest().body(response);
+		@PutMapping("/{id}")
+		public ResponseEntity<Response<TimesheetDto>> update(@PathVariable("id") Long id, @Valid @RequestBody TimesheetDto timesheetDto,
+				BindingResult result) throws ParseException{
+			Response<TimesheetDto> response = new Response<TimesheetDto>();
+			timesheetDto.setId(Optional.of(id));
+			Timesheet timesheet = this.convertDtoParaTimesheet(timesheetDto, result);
+			if(this.timesheetService.findTimesheetByCollaborator(timesheet).isPresent()) {
+				response.getErrors().add("Já existe uma entrada cadastrada com os dados informados");
+				return ResponseEntity.badRequest().body(response);
+			};
+			//TRATAERRO
+			if(result.hasErrors()) {
+				log.error("Erro validando lançamento: {}", result.getAllErrors());
+				result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
+				return ResponseEntity.badRequest().body(response);
+			}
+			//SALVANDO TIMEHSEET
+			this.timesheetService.save(timesheet);
+			response.setData(this.converterTimesheetParaDto(timesheet));
+			return ResponseEntity.ok(response);
 		}
-		//SALVANDO TIMEHSEET
-		this.timesheetService.save(timesheet);
-		response.setData(this.converterTimesheetParaDto(timesheet));
-		return ResponseEntity.ok(response);
-	}
 
 	/**
 	 * Deleta um lançamento 
@@ -140,12 +153,8 @@ public class TimesheetController {
 		this.timesheetService.delete(id);
 		return ResponseEntity.ok(new Response<String>());
 	}
-	/**
-	 * Verifica se já existe um lançamento com o mesmo período informado por colaborador.
-	 * @param timesheetDto
-	 * @result timesheet
-	 */
-	
+
+
 	//CONVERSÃO DOS DTOS
 	private Timesheet convertDtoParaTimesheet(TimesheetDto timesheetDto, BindingResult result) throws ParseException{
 		Timesheet timesheet = new Timesheet();
@@ -157,24 +166,29 @@ public class TimesheetController {
 			}else {
 				result.addError(new ObjectError("timesheet", "Lançamento não encontrado. "));
 			}
+		}else {
+			timesheet.setCollaborator(new Collaborator());
+			timesheet.getCollaborator().setId(timesheetDto.getCollaboratorId());
 		}
 		timesheet.setEndDateTime(timesheetDto.getEndDateTime());
 		timesheet.setStartDateTime(timesheetDto.getStartDateTime());
 		timesheet.setIsHoliday(timesheetDto.getIsHoliday());
 		timesheet.setIsInTravel(timesheetDto.getIsInTravel());
 		timesheet.setPeriodDescription(timesheetDto.getPeriodDescription());
-	
+
 		return timesheet;
 	}
 
 	private TimesheetDto converterTimesheetParaDto(Timesheet timesheet) {
 		TimesheetDto timesheetDto = new TimesheetDto();
+		timesheetDto.setId(Optional.of(timesheet.getId()));
 		timesheetDto.setEndDateTime(timesheet.getEndDateTime());
 		timesheetDto.setStartDateTime(timesheet.getStartDateTime());
 		timesheetDto.setIsHoliday(timesheet.getIsHoliday());
 		timesheetDto.setIsInTravel(timesheet.getIsInTravel());
 		timesheetDto.setPeriodDescription(timesheet.getPeriodDescription());
-
+		timesheetDto.setCollaboratorId(timesheet.getCollaborator().getId());
+		
 		return timesheetDto;
 	} 
 

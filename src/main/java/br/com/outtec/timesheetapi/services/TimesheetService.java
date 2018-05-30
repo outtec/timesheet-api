@@ -1,9 +1,11 @@
 package br.com.outtec.timesheetapi.services;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import br.com.outtec.timesheetapi.domain.Timesheet;
 import br.com.outtec.utils.Response;
@@ -15,7 +17,7 @@ public interface TimesheetService {
 	 * @param timehsheet
 	 * @return Timesheet
 	 */
-	Response<Timesheet> save(Timesheet timesheet);
+	Timesheet save(Timesheet timesheet);
 	
 	/**
 	 * Return a timesheet by ID
@@ -35,6 +37,21 @@ public interface TimesheetService {
 	 * @param id
 	 */
 	void delete(Long id);
+	
+	/**
+	 * Retorna Timehseets por Colaborador
+	 * @param id
+	 * @return
+	 */
+	Page<Timesheet> findByCollaboratorId(Long id, PageRequest pageRequest);
+	
+	/**
+	 * 
+	 * @param StardDate
+	 * @param EndDate
+	 * @return
+	 */
+	Timesheet findByStartDateTimeAndEndDateTime(Date StardDate, Date EndDate);
 
 	Optional<Timesheet> findTimesheetByCollaborator(Timesheet timesheet);
 }

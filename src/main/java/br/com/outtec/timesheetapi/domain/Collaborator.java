@@ -28,7 +28,7 @@ public class Collaborator implements Serializable {
 	}
 
 	public void setId(Long id) {
-		id = id;
+		this.id = id;
 	}
 
 	public String getName() {
@@ -46,7 +46,9 @@ public class Collaborator implements Serializable {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+	
 	@Enumerated(EnumType.STRING)
+	@Column(name = "perfil", nullable = false)
 	public PerfilEnum getPerfil() {
 		return perfil;
 	}
