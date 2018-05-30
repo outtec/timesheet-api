@@ -18,7 +18,6 @@ public class JwtTokenUtil {
 
 	static final String CLAIM_KEY_USERNAME = "sub";
 	static final String CLAIM_KEY_ROLE = "role";
-	static final String CLAIM_KEY_AUDIENCE = "audience";
 	static final String CLAIM_KEY_CREATED = "created";
 
 	@Value("${jwt.secret}")

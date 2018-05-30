@@ -9,21 +9,21 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import br.com.outtec.timesheetapi.security.JwtUserFactory;
-import br.com.outtec.timesheetapi.security.domain.Usuario;
-import br.com.outtec.timesheetapi.security.services.UsuarioService;
+import br.com.outtec.timesheetapi.security.domain.User;
+import br.com.outtec.timesheetapi.security.services.UserService;
 
 @Service
 public class JwtUserDetailsServiceImpl implements UserDetailsService {
 
 	@Autowired
-	private UsuarioService usuarioService;
+	private UserService userService;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Optional<Usuario> funcionario = usuarioService.buscarPorEmail(username);
+		Optional<User> User = userService.buscarPorEmail(username);
 
-		if (funcionario.isPresent()) {
-			return JwtUserFactory.create(funcionario.get());
+		if (User.isPresent()) {
+			return JwtUserFactory.create(User.get());
 		}
 
 		throw new UsernameNotFoundException("Email não encontrado.");

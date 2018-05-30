@@ -48,7 +48,7 @@ public class CollaboratorController {
 		Collaborator collaborator = new Collaborator();
 		collaborator.setName(collaboratorDto.getName());
 		collaborator.setPassword(PasswordUtils.getBCrypt(collaboratorDto.getPassword()));
-		collaborator.setPerfil(PerfilEnum.ROLE_USUARIO);
+		collaborator.setPerfil(PerfilEnum.ROLE_USER);
 		return collaborator;
 	}
 }
