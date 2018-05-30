@@ -15,7 +15,7 @@ import br.com.outtec.timesheetapi.enums.PerfilEnum;
 
 @Entity
 @Table(name = "usuario")
-public class Usuario implements Serializable {
+public class User implements Serializable {
 
 	private static final long serialVersionUID = 306411570471828345L;
 
@@ -24,7 +24,7 @@ public class Usuario implements Serializable {
 	private String senha;
 	private PerfilEnum perfil;
 
-	public Usuario() {
+	public User() {
 	}
 
 	@Id

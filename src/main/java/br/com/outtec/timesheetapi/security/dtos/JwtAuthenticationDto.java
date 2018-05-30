@@ -10,7 +10,6 @@ public class JwtAuthenticationDto {
 
 	public JwtAuthenticationDto() {
 	}
-
 	@NotEmpty(message = "Email não pode ser vazio.")
 	@Email(message = "Email inválido.")
 	public String getEmail() {

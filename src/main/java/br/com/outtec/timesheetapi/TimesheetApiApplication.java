@@ -1,10 +1,14 @@
 package br.com.outtec.timesheetapi;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import br.com.outtec.timesheetapi.enums.PerfilEnum;
+import br.com.outtec.timesheetapi.security.domain.User;
+import br.com.outtec.timesheetapi.security.repositories.UserRepository;
 import br.com.outtec.utils.PasswordUtils;
 
 
@@ -15,11 +19,31 @@ public class TimesheetApiApplication {
 		SpringApplication.run(TimesheetApiApplication.class, args);
 	}
 	private static final String PASSWORD = "whereIStheLsS?";
-
+	@Autowired
+	private UserRepository usuarioRepository;
+	
 	@Bean
 	public CommandLineRunner commandLineRunner() {
 		return args -> {
-
+			
+			
+			
+			//Criando usuário
+			User usuario = new User();
+			usuario.setEmail("joycesaquino@gmail.com");
+			usuario.setPerfil(PerfilEnum.ROLE_USER);
+			usuario.setSenha(PasswordUtils.getBCrypt(PASSWORD));
+			this.usuarioRepository.save(usuario);
+			System.out.println(usuario.toString());
+			
+			User admin = new User();
+			admin.setEmail("gbvirtual@gmail.com");
+			admin.setPerfil(PerfilEnum.ROLE_ADMIN);
+			admin.setSenha(PasswordUtils.getBCrypt(PASSWORD));
+			this.usuarioRepository.save(admin);
+			System.out.println(admin);
+				
+			//Testando Password com Bcrypt
 			String encodedPassword = PasswordUtils.getBCrypt(PASSWORD);
 			System.out.println("Password encoded : " + encodedPassword);
 			

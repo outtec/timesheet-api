@@ -61,7 +61,7 @@ public class AuthenticationController {
 		Response<TokenDto> response = new Response<TokenDto>();
 
 		if (result.hasErrors()) {
-			log.error("Erro validando lanÃ§amento: {}", result.getAllErrors());
+			log.error("Erro validando lançamento: {}", result.getAllErrors());
 			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
 			return ResponseEntity.badRequest().body(response);
 		}
@@ -79,7 +79,7 @@ public class AuthenticationController {
 	}
 
 	/**
-	 * Gera um novo token com uma nova data de expiraÃ§Ã£o.
+	 * Gera um novo token com uma nova data de expiração.
 	 * 
 	 * @param request
 	 * @return ResponseEntity<Response<TokenDto>>
@@ -95,9 +95,9 @@ public class AuthenticationController {
 		}
 
 		if (!token.isPresent()) {
-			response.getErrors().add("Token nÃ£o informado.");
+			response.getErrors().add("Token não informado.");
 		} else if (!jwtTokenUtil.tokenValido(token.get())) {
-			response.getErrors().add("Token invÃ¡lido ou expirado.");
+			response.getErrors().add("Token invalido ou expirado.");
 		}
 
 		if (!response.getErrors().isEmpty()) {
