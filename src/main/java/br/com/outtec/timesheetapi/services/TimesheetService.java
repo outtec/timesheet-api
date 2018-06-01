@@ -39,19 +39,33 @@ public interface TimesheetService {
 	void delete(Long id);
 	
 	/**
-	 * Retorna Timehseets por Colaborador
+	 * Retorna Timehseets por Colaborador Paginado
 	 * @param id
 	 * @return
 	 */
 	Page<Timesheet> findByCollaboratorId(Long id, PageRequest pageRequest);
 	
 	/**
-	 * 
-	 * @param StardDate
-	 * @param EndDate
+	 * Retorna Timehseets por Colaborador
+	 * @param id
 	 * @return
 	 */
-	Timesheet findByStartDateTimeAndEndDateTime(Date StardDate, Date EndDate);
+	List<Timesheet> findByCollaboratorId(Long id);
+	
+	/**
+	 * 
+	 * @param timesheet
+	 * @return
+	 */
+	boolean checkExistingTimesheet(Timesheet obj);
+	
+	/**
+	 * Retorna os timesheets cadastrados pelo usuário, de acordo com o intervalo de tempo fornecido.
+	 * @param obj
+	 * @return
+	 */
+	Page<Timesheet> getByPeriod(Date startDate, Date endtDate, PageRequest pageRequest);
 
-	Optional<Timesheet> findTimesheetByCollaborator(Timesheet timesheet);
+
+	
 }

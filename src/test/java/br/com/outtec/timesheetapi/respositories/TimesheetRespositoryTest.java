@@ -28,7 +28,6 @@ import br.com.outtec.utils.PasswordUtils;
 @SpringBootTest
 //@ActiveProfiles("test")
 public class TimesheetRespositoryTest {
-	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	
 	@Autowired
 	private TimesheetRepository timehseetRepository;
@@ -36,24 +35,21 @@ public class TimesheetRespositoryTest {
 	@Autowired
 	private CollaboratorRepository collaboratorRepository;
 
-	private long collabodatorId;
-	private long timesheetId;
-
-
+	Timesheet timesheet = new Timesheet();
+	Collaborator collaborator =  new Collaborator();
+	
 	@Before
 	public void setUp()throws Exception{
-		Collaborator collaborator =  this.collaboratorRepository.save(getCollaboratorData());
-		this.collabodatorId = collaborator.getId();
+		collaborator =  this.collaboratorRepository.save(getCollaboratorData());
 
-		Timesheet timesheet = this.timehseetRepository.save(getTimesheetData(collaborator));
-		this.timesheetId = timesheet.getId();
+		timesheet = this.timehseetRepository.save(getTimesheetData(collaborator));
 		this.timehseetRepository.save(getTimesheetData1(collaborator));
 	}
 	
 	
 	@Test
 	public void testfindByCollaboratorId() {
-		List<Timesheet> timesheets = this.timehseetRepository.findByCollaboratorId(collabodatorId);
+		List<Timesheet> timesheets = this.timehseetRepository.findByCollaboratorId(collaborator.getId());
 		System.out.println("TEST FUNC BY COLABORADOR");
 		System.out.println("Lançamentos do colaborador :" + timesheets.get(0).getCollaborator().getName());
 		System.out.println("------ Descrição dos Lançamentos ------");
@@ -62,6 +58,12 @@ public class TimesheetRespositoryTest {
 		assertEquals(2,timesheets.size());
 	}
 
+	@Test
+	public void testfindByStartDateTimeAndEndDateTimeAndCollaborator(){
+		List<Timesheet> timesheets = this.timehseetRepository.findByStartDateTimeAndEndDateTimeAndCollaborator(timesheet.getStartDateTime(), timesheet.getEndDateTime(),collaborator);
+		assertEquals(1,timesheets.size());	
+	}
+	
 	private Timesheet getTimesheetData(Collaborator collaborator) {
 		Timesheet timesheet = new Timesheet();
 		timesheet.setCollaborator(collaborator);

@@ -56,6 +56,9 @@ public class TimesheetApiApplication {
 			colaborador.setPerfil(PerfilEnum.ROLE_USER);
 			this.colaboratorRepository.save(colaborador);
 			System.out.println("Colaborador cadastrado - Nome :" + colaborador.getName());
+			
+			//Criando uma entrada de timesheet
+			
 					
 				
 			//Testando Password com Bcrypt

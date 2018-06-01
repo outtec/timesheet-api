@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import br.com.outtec.timesheetapi.domain.Timesheet;
 import br.com.outtec.timesheetapi.repositories.TimesheetRepository;
 import br.com.outtec.timesheetapi.services.TimesheetService;
-import br.com.outtec.utils.Response;
 
 
 @Service
@@ -25,9 +24,9 @@ public class TimesheetServiceImpl implements TimesheetService{
 	@Autowired
 	private TimesheetRepository timesheetRepository;
 
-	public Timesheet save(Timesheet timesheet) { 
-		log.info("Persistindo Timesheet: {}", timesheet); 
-		return this.timesheetRepository.save(timesheet); 
+	public Timesheet save(Timesheet obj) { 
+		log.info("Persistindo Timesheet: {}", obj);
+		return this.timesheetRepository.save(obj); 
 	} 
 
 	public Optional<Timesheet> findByID(Long id){
@@ -46,21 +45,32 @@ public class TimesheetServiceImpl implements TimesheetService{
 	}
 
 	public  Page<Timesheet> findByCollaboratorId(Long id, PageRequest pageRequest){
-		log.info("Buscando lançamentos para o colaborador ID {}", id);
 		return this.timesheetRepository.findByCollaboratorId(id, pageRequest);
 	};
 
 
-	@Override
-	public Optional<Timesheet> findTimesheetByCollaborator(Timesheet timesheet) {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean checkExistingTimesheet(Timesheet obj) {
+		Boolean existeTimesheet = false;
+		List<Timesheet> list = this.timesheetRepository.findByStartDateTimeAndEndDateTimeAndCollaborator(obj.getStartDateTime(),obj.getEndDateTime(),obj.getCollaborator());
+		if (list.isEmpty()){
+			return false;
+		}
+		Timesheet timesheet = list.get(0);
+		if(timesheet != null && !obj.equals(timesheet)){
+			existeTimesheet = true;
+		}
+		return existeTimesheet;
 	}
 
 	@Override
-	public Timesheet findByStartDateTimeAndEndDateTime(Date StardDate, Date EndDate) {
-		return this.timesheetRepository.findByStartDateTimeAndEndDateTime(StardDate, EndDate);
+	public List<Timesheet> findByCollaboratorId(Long id) {
+		return this.timesheetRepository.findByCollaboratorId(id);
 	}
+
+	public Page<Timesheet> getByPeriod(Date startDate, Date endDate, PageRequest pageRequest) {
+		return this.timesheetRepository.findByCollaboratorBetween(startDate, endDate,pageRequest);
+	}
+
 
 
 

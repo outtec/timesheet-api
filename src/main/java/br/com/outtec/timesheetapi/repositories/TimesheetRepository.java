@@ -20,14 +20,18 @@ import br.com.outtec.timesheetapi.domain.Timesheet;
 
 @NamedQueries({
 	@NamedQuery(name = "TimesheetRepository.findByCollaboratorId", 
-			query = "SELECT ts FROM Timesheet ts WHERE ts.collaborator.id = :collaboratorId") })
+			query = "SELECT ts FROM Timesheet ts WHERE ts.collaborator.id = :collaboratorId")	
+	})
+
 public interface TimesheetRepository extends JpaRepository<Timesheet,Long>  {
 
 	List<Timesheet> findByCollaboratorId(@Param("collaboratorId") Long collabodatorId);
 	Page<Timesheet> findByCollaboratorId(@Param("collaboratorId") Long collabodatorId ,Pageable pegeable);
-	Timesheet findByStartDateTimeAndEndDateTime(Date startDateTime, Date endDateTime);
 	
-	Optional<Timesheet> findByStartDateTimeAndEndDateTimeAndCollaborator(Date endDateTime,Date startDateTime,Collaborator collaborator);
-
+	Optional<Timesheet> findByStartDateTimeAndEndDateTime(Date startDateTime, Date endDateTime);
+	
+	List<Timesheet> findByStartDateTimeAndEndDateTimeAndCollaborator(Date startDateTime,Date endDateTime,Collaborator collaborator);
+	Page<Timesheet> findByCollaboratorBetween(Date startDateTime,Date endDateTime, Pageable pegeable);
+	
 	
 }
