@@ -6,7 +6,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import br.com.outtec.timesheetapi.domain.Collaborator;
 import br.com.outtec.timesheetapi.enums.PerfilEnum;
+import br.com.outtec.timesheetapi.repositories.CollaboratorRepository;
 import br.com.outtec.timesheetapi.security.domain.User;
 import br.com.outtec.timesheetapi.security.repositories.UserRepository;
 import br.com.outtec.utils.PasswordUtils;
@@ -19,14 +21,17 @@ public class TimesheetApiApplication {
 		SpringApplication.run(TimesheetApiApplication.class, args);
 	}
 	private static final String PASSWORD = "whereIStheLsS?";
+	
 	@Autowired
 	private UserRepository usuarioRepository;
+	
+
+	@Autowired
+	private CollaboratorRepository colaboratorRepository;
 	
 	@Bean
 	public CommandLineRunner commandLineRunner() {
 		return args -> {
-			
-			
 			
 			//Criando usuário
 			User usuario = new User();
@@ -42,6 +47,19 @@ public class TimesheetApiApplication {
 			admin.setSenha(PasswordUtils.getBCrypt(PASSWORD));
 			this.usuarioRepository.save(admin);
 			System.out.println(admin);
+			
+			//Criando collaborator
+			Collaborator colaborador = new Collaborator();
+			//colaborador.setId(1L);
+			colaborador.setName("Josenildo");
+			colaborador.setPassword("123456!");
+			colaborador.setPerfil(PerfilEnum.ROLE_USER);
+			this.colaboratorRepository.save(colaborador);
+			System.out.println("Colaborador cadastrado - Nome :" + colaborador.getName());
+			
+			//Criando uma entrada de timesheet
+			
+					
 				
 			//Testando Password com Bcrypt
 			String encodedPassword = PasswordUtils.getBCrypt(PASSWORD);

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import br.com.outtec.timesheetapi.domain.Collaborator;
 import br.com.outtec.timesheetapi.repositories.CollaboratorRepository;
 import br.com.outtec.timesheetapi.services.CollaboratorService;
-import br.com.outtec.utils.Response;
+
 
 @Service
 public class CollaboratorServiceImpl  implements CollaboratorService{
@@ -21,11 +21,9 @@ public class CollaboratorServiceImpl  implements CollaboratorService{
 	private CollaboratorRepository collaboratorRepository;
 	
 	@Override
-	public Response<Collaborator> save(Collaborator Collaborator) {
-		Response<Collaborator> response = new Response<Collaborator>();
-		this.collaboratorRepository.save(Collaborator);
-		response.getErrors().add("Colaborador salvo com sucesso");
-		return response;
+	public Collaborator save(Collaborator collaborator) {
+		log.info("Salvando Colaborador");
+		return this.collaboratorRepository.save(collaborator);
 	}
 
 	@Override
