@@ -20,7 +20,7 @@ public class TimesheetApiApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(TimesheetApiApplication.class, args);
 	}
-	private static final String PASSWORD = "whereIStheLsS?";
+	private static final String PASSWORD = "123456!";
 	
 	@Autowired
 	private UserRepository usuarioRepository;
