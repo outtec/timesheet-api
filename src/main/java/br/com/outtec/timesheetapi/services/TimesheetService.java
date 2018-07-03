@@ -59,13 +59,4 @@ public interface TimesheetService {
 	 */
 	boolean checkExistingTimesheet(Timesheet obj);
 	
-	/**
-	 * Retorna os timesheets cadastrados pelo usuário, de acordo com o intervalo de tempo fornecido.
-	 * @param obj
-	 * @return
-	 */
-	Page<Timesheet> getByPeriod(Date startDate, Date endtDate, PageRequest pageRequest);
-
-
-	
 }

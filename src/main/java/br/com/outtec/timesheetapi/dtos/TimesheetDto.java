@@ -1,6 +1,5 @@
 package br.com.outtec.timesheetapi.dtos;
 
-import java.util.Date;
 import java.util.Optional;
 import org.hibernate.validator.constraints.Length;
 
@@ -8,8 +7,8 @@ import org.hibernate.validator.constraints.Length;
 public class TimesheetDto {
 
 	private Optional<Long> id = Optional.empty();
-	private Date startDateTime;
-	private Date endDateTime;
+	private String startDateTime;
+	private String endDateTime;
 	private Boolean isHoliday;
 	private Boolean isInTravel;
 	private String periodDescription;
@@ -23,24 +22,6 @@ public class TimesheetDto {
 	}
 	public void setId(Optional<Long> id) {
 		this.id = id;
-	}
-
-	//@NotEmpty(message = "A Data e hora de início do período não pode ser vazia")
-	public Date getStartDateTime() {
-		return startDateTime;
-	}
-
-	public void setStartDateTime(Date startDateTime) {
-		this.startDateTime = startDateTime;
-	}
-
-	//@NotEmpty(message = "A Data e hora final do período precisa ser informada")
-	public Date getEndDateTime() {
-		return endDateTime;
-	}
-
-	public void setEndDateTime(Date date) {
-		this.endDateTime = date;
 	}
 
 	public Boolean getIsHoliday() {
@@ -71,7 +52,21 @@ public class TimesheetDto {
 	public void setCollaboratorId(Long collaboratorId) {
 		this.collaboratorId = collaboratorId;
 	}
-	
 
+	public String getStartDateTime() {
+		return startDateTime;
+	}
+
+	public void setStartDateTime(String startDateTime) {
+		this.startDateTime = startDateTime;
+	}
+
+	public String getEndDateTime() {
+		return endDateTime;
+	}
+
+	public void setEndDateTime(String endDateTime) {
+		this.endDateTime = endDateTime;
+	}
 
 }

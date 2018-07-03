@@ -1,8 +1,8 @@
 package br.com.outtec.timesheetapi.controllers;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -40,7 +40,8 @@ import br.com.outtec.utils.Response;
 public class TimesheetController {
 
 	private static final Logger log = LoggerFactory.getLogger(TimesheetController.class);
-	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+	private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+	DateFormat format = DateFormat.getDateTimeInstance();
 
 	@Autowired
 	private TimesheetService timesheetService;
@@ -50,7 +51,6 @@ public class TimesheetController {
 
 	public TimesheetController() {}
 
-	
 	@GetMapping("")
 	public ResponseEntity<Response<Page<TimesheetDto>>> getTimesheetsByCollaboratorId(
 			@RequestParam(value = "collaboratorid") long collaboratorId,
@@ -66,22 +66,6 @@ public class TimesheetController {
 		return ResponseEntity.ok(response);
 	}
 	
-	@GetMapping("/teste")
-	public ResponseEntity<Response<Page<TimesheetDto>>> getByPeriod(
-			@RequestParam(value = "pag", defaultValue = "0") int pag,
-			@RequestParam(value = "ord", defaultValue = "id") String ord,
-			@RequestParam(value = "dir", defaultValue = "DESC") String dir,
-			@RequestParam(value = "startdate") String startDate,
-			@RequestParam(value = "enddate") String endtDate){
-		Response<Page<TimesheetDto>> response = new Response<Page<TimesheetDto>>();
-		PageRequest pageRequest = new PageRequest(pag, this.qtdPorPagina,Direction.valueOf(dir), ord);
-		Page<Timesheet> timesheets = this.timesheetService.getByPeriod(new Date(startDate), new Date(endtDate),pageRequest);
-		Page<TimesheetDto> timesheetDto = timesheets.map(timesheet -> this.converterTimesheetParaDto(timesheet));
-		response.setData(timesheetDto);
-		return ResponseEntity.ok(response);
-	}
-
-
 	/**
 	 * Retorna uma entrada cadastrada por ID
 	 * @param id
@@ -131,7 +115,6 @@ public class TimesheetController {
 			return ResponseEntity.ok(response);
 		}
 	}
-
 
 	/**
 	 * Atualiza os dados de um período de horas
@@ -186,7 +169,6 @@ public class TimesheetController {
 		return ResponseEntity.ok(new Response<String>());
 	}
 
-
 	//CONVERSÃO DOS DTOS
 	private Timesheet convertDtoParaTimesheet(TimesheetDto timesheetDto, BindingResult result) throws ParseException{
 		Timesheet timesheet = new Timesheet();
@@ -202,8 +184,8 @@ public class TimesheetController {
 			timesheet.setCollaborator(new Collaborator());
 			timesheet.getCollaborator().setId(timesheetDto.getCollaboratorId());
 		}
-		timesheet.setEndDateTime(timesheetDto.getEndDateTime());
-		timesheet.setStartDateTime(timesheetDto.getStartDateTime());
+		timesheet.setEndDateTime(format.parse(timesheetDto.getEndDateTime()));
+		timesheet.setStartDateTime(format.parse(timesheetDto.getStartDateTime()));
 		timesheet.setIsHoliday(timesheetDto.getIsHoliday());
 		timesheet.setIsInTravel(timesheetDto.getIsInTravel());
 		timesheet.setPeriodDescription(timesheetDto.getPeriodDescription());
@@ -214,8 +196,8 @@ public class TimesheetController {
 	private TimesheetDto converterTimesheetParaDto(Timesheet timesheet) {
 		TimesheetDto timesheetDto = new TimesheetDto();
 		timesheetDto.setId(Optional.of(timesheet.getId()));
-		timesheetDto.setEndDateTime(timesheet.getEndDateTime());
-		timesheetDto.setStartDateTime(timesheet.getStartDateTime());
+		timesheetDto.setEndDateTime(this.dateFormat.format(timesheet.getEndDateTime()));
+		timesheetDto.setStartDateTime(this.dateFormat.format(timesheet.getStartDateTime()));
 		timesheetDto.setIsHoliday(timesheet.getIsHoliday());
 		timesheetDto.setIsInTravel(timesheet.getIsInTravel());
 		timesheetDto.setPeriodDescription(timesheet.getPeriodDescription());

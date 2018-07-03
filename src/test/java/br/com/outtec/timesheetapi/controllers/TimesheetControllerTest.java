@@ -3,6 +3,8 @@ package br.com.outtec.timesheetapi.controllers;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
 
@@ -34,7 +36,8 @@ import br.com.outtec.utils.Response;
 @AutoConfigureMockMvc
 //@ActiveProfiles("test")
 public class TimesheetControllerTest {
-
+	
+	
 	@Autowired
 	private MockMvc mvc;
 
@@ -64,35 +67,21 @@ public class TimesheetControllerTest {
 				.andExpect(jsonPath("$.errors").isEmpty());
 	}
 
-	/**
-	 * Test de delete
-	 * @throws Exception
-	 
-	@Test
-	public void testDeleteTimehseet() throws Exception{
-		BDDMockito.given(timehseeService.findByID(Mockito.anyLong())).willReturn(Optional.of(new Timesheet()));
-		mvc.perform(MockMvcRequestBuilders.delete(URL_API + ID_TIMESHEET)
-				.accept(MediaType.APPLICATION_JSON))
-		.andExpect(status().isOk());
-
-	}
-	*/
-
-
+	private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+	DateFormat format = DateFormat.getDateTimeInstance();
+	
 	private String getJsonRequestPost() throws JsonProcessingException {
 		TimesheetDto timesheetDto = new TimesheetDto();
 		timesheetDto.setId(null);
 		timesheetDto.setCollaboratorId(COLLABORATOR_ID);
-		timesheetDto.setStartDateTime(DATA);
-		timesheetDto.setEndDateTime(DATA);
+		timesheetDto.setStartDateTime(this.dateFormat.format(DATA));
+		timesheetDto.setEndDateTime(this.dateFormat.format(DATA));
 		timesheetDto.setIsHoliday(false);
 		timesheetDto.setIsInTravel(false);
 		timesheetDto.setPeriodDescription(PERIOD_DESCRIPTION);
 		ObjectMapper mapper = new ObjectMapper();
 		return mapper.writeValueAsString(timesheetDto);
-
 	}
-
 
 	private Timesheet getTimesheetData() {
 		Timesheet timesheet = new Timesheet();
