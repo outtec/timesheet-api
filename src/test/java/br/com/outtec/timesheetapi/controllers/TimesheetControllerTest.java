@@ -67,7 +67,7 @@ public class TimesheetControllerTest {
 				.andExpect(jsonPath("$.errors").isEmpty());
 	}
 
-	private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+	SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 	DateFormat format = DateFormat.getDateTimeInstance();
 	
 	private String getJsonRequestPost() throws JsonProcessingException {

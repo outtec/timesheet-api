@@ -1,5 +1,11 @@
 package br.com.outtec.timesheetapi;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -21,18 +27,18 @@ public class TimesheetApiApplication {
 		SpringApplication.run(TimesheetApiApplication.class, args);
 	}
 	private static final String PASSWORD = "123456!";
-	
+
 	@Autowired
 	private UserRepository usuarioRepository;
-	
+
 
 	@Autowired
 	private CollaboratorRepository colaboratorRepository;
-	
+
 	@Bean
 	public CommandLineRunner commandLineRunner() {
 		return args -> {
-			
+
 			//Criando usuário
 			User usuario = new User();
 			usuario.setEmail("joycesaquino@gmail.com");
@@ -40,14 +46,14 @@ public class TimesheetApiApplication {
 			usuario.setSenha(PasswordUtils.getBCrypt(PASSWORD));
 			this.usuarioRepository.save(usuario);
 			System.out.println(usuario.toString());
-			
+
 			User admin = new User();
 			admin.setEmail("gbvirtual@gmail.com");
 			admin.setPerfil(PerfilEnum.ROLE_ADMIN);
 			admin.setSenha(PasswordUtils.getBCrypt(PASSWORD));
 			this.usuarioRepository.save(admin);
 			System.out.println(admin);
-			
+
 			//Criando collaborator
 			Collaborator colaborador = new Collaborator();
 			//colaborador.setId(1L);
@@ -56,22 +62,32 @@ public class TimesheetApiApplication {
 			colaborador.setPerfil(PerfilEnum.ROLE_USER);
 			this.colaboratorRepository.save(colaborador);
 			System.out.println("Colaborador cadastrado - Nome :" + colaborador.getName());
-			
+
 			//Criando uma entrada de timesheet
-			
-					
-				
+
+
+
 			//Testando Password com Bcrypt
 			String encodedPassword = PasswordUtils.getBCrypt(PASSWORD);
 			System.out.println("Password encoded : " + encodedPassword);
-			
+
 			encodedPassword = PasswordUtils.getBCrypt(PASSWORD);
 			System.out.println("Password encoded hash again : " + encodedPassword);
-			
+
 			encodedPassword = PasswordUtils.getBCrypt(PASSWORD);
 			System.out.println("Valid Password : " + PasswordUtils.isValidPassword(PASSWORD, encodedPassword));
+
+
+			Locale brasil = new Locale("pt", "BR");
+			DateFormat dateformat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/YYYY HH:mm");
+
+			Date data2 = simpleDateFormat.parse("12/01/1995 12:20");
+			System.out.println("Dateformat " + dateformat.format(data2));
+			System.out.println("SDateformat " + simpleDateFormat.format(data2));
 			
-			
+		    //System.out.println(“Data e hora brasileira: ”+f2.format(data));
+
 		};
-}
+	}
 }

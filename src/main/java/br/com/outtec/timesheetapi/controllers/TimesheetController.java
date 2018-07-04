@@ -3,6 +3,7 @@ package br.com.outtec.timesheetapi.controllers;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -40,8 +41,9 @@ import br.com.outtec.utils.Response;
 public class TimesheetController {
 
 	private static final Logger log = LoggerFactory.getLogger(TimesheetController.class);
-	private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-	DateFormat format = DateFormat.getDateTimeInstance();
+
+	DateFormat dateformat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
+	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
 	@Autowired
 	private TimesheetService timesheetService;
@@ -184,8 +186,12 @@ public class TimesheetController {
 			timesheet.setCollaborator(new Collaborator());
 			timesheet.getCollaborator().setId(timesheetDto.getCollaboratorId());
 		}
-		timesheet.setEndDateTime(format.parse(timesheetDto.getEndDateTime()));
-		timesheet.setStartDateTime(format.parse(timesheetDto.getStartDateTime()));
+		
+		Date endDate = simpleDateFormat.parse(timesheetDto.getEndDateTime());
+		Date startDate = simpleDateFormat.parse(timesheetDto.getStartDateTime());
+		
+		timesheet.setEndDateTime(endDate);
+		timesheet.setStartDateTime(startDate);
 		timesheet.setIsHoliday(timesheetDto.getIsHoliday());
 		timesheet.setIsInTravel(timesheetDto.getIsInTravel());
 		timesheet.setPeriodDescription(timesheetDto.getPeriodDescription());
@@ -196,8 +202,8 @@ public class TimesheetController {
 	private TimesheetDto converterTimesheetParaDto(Timesheet timesheet) {
 		TimesheetDto timesheetDto = new TimesheetDto();
 		timesheetDto.setId(Optional.of(timesheet.getId()));
-		timesheetDto.setEndDateTime(this.dateFormat.format(timesheet.getEndDateTime()));
-		timesheetDto.setStartDateTime(this.dateFormat.format(timesheet.getStartDateTime()));
+		timesheetDto.setEndDateTime(dateformat.format(timesheet.getEndDateTime()));
+		timesheetDto.setStartDateTime(dateformat.format(timesheet.getStartDateTime()));
 		timesheetDto.setIsHoliday(timesheet.getIsHoliday());
 		timesheetDto.setIsInTravel(timesheet.getIsInTravel());
 		timesheetDto.setPeriodDescription(timesheet.getPeriodDescription());
