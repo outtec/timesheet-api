@@ -74,8 +74,7 @@ public class AuthenticationController {
 		UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationDto.getEmail());
 		String token = jwtTokenUtil.obterToken(userDetails);
 		response.setData(new TokenDto(token));
-
-		return ResponseEntity.ok(response);
+ 		return ResponseEntity.ok(response);
 	}
 
 	/**
