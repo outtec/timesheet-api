@@ -3,6 +3,7 @@ package br.com.outtec.timesheetapi.security.controllers;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -55,7 +56,7 @@ public class AuthenticationController {
 	 * @return ResponseEntity<Response<TokenDto>>
 	 * @throws AuthenticationException
 	 */
-	@PostMapping
+	
 	public ResponseEntity<Response<TokenDto>> gerarTokenJwt(@Valid @RequestBody JwtAuthenticationDto authenticationDto,
 			BindingResult result) throws AuthenticationException {
 		Response<TokenDto> response = new Response<TokenDto>();
@@ -74,7 +75,22 @@ public class AuthenticationController {
 		UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationDto.getEmail());
 		String token = jwtTokenUtil.obterToken(userDetails);
 		response.setData(new TokenDto(token));
+		//response.addHeader("Authorization", "Bearer " + token)
  		return ResponseEntity.ok(response);
+	}
+	
+	@PostMapping
+	public ResponseEntity<Void> refreshToken(@RequestBody JwtAuthenticationDto authenticationDto, HttpServletResponse response) {
+		log.info("NEW TOKEN Gerando token para o email {}.", authenticationDto.getEmail());
+		Authentication authentication = authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(authenticationDto.getEmail(), authenticationDto.getSenha()));
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		
+		UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationDto.getEmail());
+		String token = jwtTokenUtil.obterToken(userDetails);
+		response.addHeader("Authorization", "Bearer " + token);
+		response.addHeader("access-control-expose-headers", "Authorization");
+		return ResponseEntity.noContent().build();
 	}
 
 	/**

@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -36,7 +37,7 @@ import br.com.outtec.timesheetapi.services.TimesheetService;
 import br.com.outtec.utils.Response;
 
 @RestController
-@RequestMapping("api/v1/timesheets")
+@RequestMapping("api/v1/")
 @CrossOrigin(origins = "*")
 public class TimesheetController {
 
@@ -53,7 +54,8 @@ public class TimesheetController {
 
 	public TimesheetController() {}
 
-	@GetMapping("")
+	@GetMapping("timesheets")
+	@PreAuthorize("hasAnyRole('USER')")
 	public ResponseEntity<Response<Page<TimesheetDto>>> getTimesheetsByCollaboratorId(
 			@RequestParam(value = "collaboratorid") long collaboratorId,
 			@RequestParam(value = "pag", defaultValue = "0") int pag,
@@ -73,7 +75,7 @@ public class TimesheetController {
 	 * @param id
 	 * @return Timesheet
 	 */
-	@GetMapping("/{id}")
+	@GetMapping("timesheets/{id}")
 	public ResponseEntity<Response<TimesheetDto>> getByID(@PathVariable("id") long id){
 		log.info("Buscando lançamento por ID: {}", id);
 		Response<TimesheetDto> response = new Response<TimesheetDto>();
@@ -96,7 +98,7 @@ public class TimesheetController {
 	 * @throws ParseException 
 	 *
 	 * */
-	@PostMapping("") 
+	@PostMapping("timesheets") 
 	public ResponseEntity<Response<TimesheetDto>> save(@Valid @RequestBody TimesheetDto timesheetDto, 
 			BindingResult result) throws ParseException{ 
 		log.info("Adicionando lançamento: {}", timesheetDto.toString()); 
@@ -126,7 +128,7 @@ public class TimesheetController {
 	 * @return timsheet
 	 * @throws ParseException
 	 */
-	@PutMapping("/{id}")
+	@PutMapping("timesheets/{id}")
 	public ResponseEntity<Response<TimesheetDto>> update(@PathVariable("id") Long id, @Valid @RequestBody TimesheetDto timesheetDto,
 			BindingResult result) throws ParseException{
 		Response<TimesheetDto> response = new Response<TimesheetDto>();
@@ -147,7 +149,7 @@ public class TimesheetController {
 			//SALVANDO ENTRADA DE TIMESHEET 
 			timesheet = this.timesheetService.save(timesheet); 
 			response.setData(this.converterTimesheetParaDto(timesheet)); 
-			return ResponseEntity.ok(response);
+			return ResponseEntity.ok().body(response);
 		}
 	}
 
@@ -156,7 +158,7 @@ public class TimesheetController {
 	 * @param id
 	 * @return response
 	 */
-	@DeleteMapping("/{id}")
+	@DeleteMapping("timesheets/{id}")
 	public ResponseEntity<Response<String>> delete(@PathVariable("id") Long id){
 		Response<String> response = new Response<String>();
 		Optional<Timesheet> timesheet = timesheetService.findByID(id);

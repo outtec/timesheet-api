@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import javax.xml.stream.events.Comment;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -37,8 +39,9 @@ public class TimesheetApiApplication {
 	@Bean
 	public CommandLineRunner commandLineRunner() {
 		return args -> {
-
-			//Criando usuário
+/*
+ * 	
+	//Criando usuário
 			User usuario = new User();
 			usuario.setEmail("joycesaquino@gmail.com");
 			usuario.setPerfil(PerfilEnum.ROLE_USER);
@@ -63,9 +66,10 @@ public class TimesheetApiApplication {
 			System.out.println("Colaborador cadastrado - Nome :" + colaborador.getName());
 
 			//Criando uma entrada de timesheet
+ 
 
-
-
+	
+* */
 			//Testando Password com Bcrypt
 			String encodedPassword = PasswordUtils.getBCrypt(PASSWORD);
 			System.out.println("Password encoded : " + encodedPassword);

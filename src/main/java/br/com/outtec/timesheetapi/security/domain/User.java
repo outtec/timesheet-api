@@ -14,7 +14,7 @@ import javax.persistence.Table;
 import br.com.outtec.timesheetapi.enums.PerfilEnum;
 
 @Entity
-@Table(name = "usuario")
+@Table(name = "user")
 public class User implements Serializable {
 
 	private static final long serialVersionUID = 306411570471828345L;
