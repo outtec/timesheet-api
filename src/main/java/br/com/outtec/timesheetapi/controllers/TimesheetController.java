@@ -1,5 +1,6 @@
 package br.com.outtec.timesheetapi.controllers;
 
+import java.net.URI;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.outtec.timesheetapi.domain.Collaborator;
 import br.com.outtec.timesheetapi.domain.Timesheet;
@@ -55,7 +57,6 @@ public class TimesheetController {
 	public TimesheetController() {}
 
 	@GetMapping("timesheets")
-	@PreAuthorize("hasAnyRole('USER')")
 	public ResponseEntity<Response<Page<TimesheetDto>>> getTimesheetsByCollaboratorId(
 			@RequestParam(value = "collaboratorid") long collaboratorId,
 			@RequestParam(value = "pag", defaultValue = "0") int pag,
@@ -119,7 +120,25 @@ public class TimesheetController {
 			return ResponseEntity.ok(response);
 		}
 	}
+	/**
+	 * 
+	 * @param obj
+	 * @param result
+	 * @return
+	 * @throws ParseException
+	**/
+	/**
+	 * 
+	@PostMapping("timesheets")
+	public ResponseEntity<Void> insert(@Valid @RequestBody TimesheetDto obj, BindingResult result) throws ParseException {
+		Timesheet timesheet = this.timesheetService.save(this.convertDtoParaTimesheet(obj,result));
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+				.path("/{id}").buildAndExpand(obj.getId()).toUri();
+		return ResponseEntity.created(uri).build();
+	}
+	*/
 
+	
 	/**
 	 * Atualiza os dados de um período de horas
 	 * @param id
