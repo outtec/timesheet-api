@@ -55,7 +55,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			"/timesheets**",
 			"/collaborators**",
 			"/api/v1/auth**",
-			"/api/v1/timesheets**",
+			"/api/v1/timesheets/**",
 	};
 
 	
