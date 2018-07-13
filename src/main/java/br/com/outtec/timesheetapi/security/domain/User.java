@@ -11,7 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import br.com.outtec.timesheetapi.enums.PerfilEnum;
+import br.com.outtec.timesheetapi.enums.Perfil;
 
 @Entity
 @Table(name = "user")
@@ -22,7 +22,7 @@ public class User implements Serializable {
 	private Long id;
 	private String email;
 	private String senha;
-	private PerfilEnum perfil;
+	private Perfil perfil;
 
 	public User() {
 	}
@@ -48,11 +48,11 @@ public class User implements Serializable {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "perfil", nullable = false)
-	public PerfilEnum getPerfil() {
+	public Perfil getPerfil() {
 		return perfil;
 	}
 
-	public void setPerfil(PerfilEnum perfil) {
+	public void setPerfil(Perfil perfil) {
 		this.perfil = perfil;
 	}
 

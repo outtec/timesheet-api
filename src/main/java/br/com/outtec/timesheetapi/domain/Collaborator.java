@@ -3,7 +3,7 @@ package br.com.outtec.timesheetapi.domain;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.*;
-import br.com.outtec.timesheetapi.enums.PerfilEnum;
+import br.com.outtec.timesheetapi.enums.Perfil;
 
 @Entity
 public class Collaborator implements Serializable {
@@ -15,7 +15,7 @@ public class Collaborator implements Serializable {
 	private Long id;
 	private String name;
 	private String password;
-	private PerfilEnum perfil;
+	private Perfil perfil;
 	
 	@OneToMany(targetEntity= Timesheet.class, mappedBy = "collaborator", fetch = FetchType.LAZY, cascade = CascadeType.ALL )
 	private List<Timesheet> timesheets;
@@ -48,11 +48,11 @@ public class Collaborator implements Serializable {
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "perfil", nullable = false)
-	public PerfilEnum getPerfil() {
+	public Perfil getPerfil() {
 		return perfil;
 	}
 
-	public void setPerfil(PerfilEnum perfil) {
+	public void setPerfil(Perfil perfil) {
 		this.perfil = perfil;
 	}
 

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.outtec.timesheetapi.domain.Collaborator;
 import br.com.outtec.timesheetapi.dtos.CollaboratorDto;
-import br.com.outtec.timesheetapi.enums.PerfilEnum;
+import br.com.outtec.timesheetapi.enums.Perfil;
 import br.com.outtec.timesheetapi.services.CollaboratorService;
 import br.com.outtec.utils.PasswordUtils;
 import br.com.outtec.utils.Response;
@@ -56,7 +56,6 @@ public class CollaboratorController {
 		Collaborator collaborator = new Collaborator();
 		collaborator.setName(collaboratorDto.getName());
 		collaborator.setPassword(PasswordUtils.getBCrypt(collaboratorDto.getPassword()));
-		collaborator.setPerfil(PerfilEnum.ROLE_USER);
 		return collaborator;
 	}
 	
@@ -64,7 +63,6 @@ public class CollaboratorController {
 		CollaboratorDto collaboratorDto = new CollaboratorDto();
 		collaboratorDto.setId(Optional.of(obj.getId()));
 		collaboratorDto.setName(obj.getName());
-		collaboratorDto.setPerfil(obj.getPerfil());
 		return collaboratorDto;
 	}
 }

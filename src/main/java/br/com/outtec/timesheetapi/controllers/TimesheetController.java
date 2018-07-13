@@ -83,7 +83,7 @@ public class TimesheetController {
 		Optional<Timesheet> timesheet = timesheetService.findByID(id);
 
 		//TRATAMENTO DE ERRO
-		if(!timesheet.isPresent()) {
+		if(timesheet == null) {
 			response.getErrors().add("Lançamento não encontrado para o id " + id);
 			return ResponseEntity.badRequest().body(response);
 		}

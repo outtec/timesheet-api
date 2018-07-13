@@ -71,8 +71,4 @@ public class TimesheetServiceImpl implements TimesheetService{
 		return this.timesheetRepository.findByCollaboratorBetween(startDate, endDate,pageRequest);
 	}
 
-
-
-
-
 }

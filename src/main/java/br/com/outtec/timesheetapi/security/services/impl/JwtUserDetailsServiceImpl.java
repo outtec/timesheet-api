@@ -28,5 +28,6 @@ public class JwtUserDetailsServiceImpl implements UserDetailsService {
 
 		throw new UsernameNotFoundException("Email não encontrado.");
 	}
-
+	
+	
 }

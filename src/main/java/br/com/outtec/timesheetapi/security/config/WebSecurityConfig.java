@@ -3,6 +3,8 @@ package br.com.outtec.timesheetapi.security.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -14,10 +16,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import br.com.outtec.timesheetapi.security.JwtAuthenticationEntryPoint;
-import br.com.outtec.timesheetapi.security.filters.JwtAuthenticationTokenFilter;
+import br.com.outtec.timesheetapi.security.filters.JwtAuthenticationFilter;
+import br.com.outtec.timesheetapi.security.filters.JwtAuthorizationFilter;
+import br.com.outtec.timesheetapi.security.utils.JwtTokenUtil;
 
 @Configuration
 @EnableWebSecurity
@@ -25,26 +30,35 @@ import br.com.outtec.timesheetapi.security.filters.JwtAuthenticationTokenFilter;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	private JwtAuthenticationEntryPoint unauthorizedHandler;
-
-	@Autowired
 	private UserDetailsService userDetailsService;
-
+	
 	@Autowired
-	public void configureAuthentication(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-		authenticationManagerBuilder.userDetailsService(this.userDetailsService).passwordEncoder(passwordEncoder());
-	}
+    private Environment env;
+	
+	@Autowired
+	private JwtTokenUtil jwtTokenUtil;
+	
+	private static final String[] PUBLIC_MATCHERS = {
+			"/timesheets**",
+			"/collaborators**",
+			"/api/v1/**",
+			"/api/v1/timesheets**",
+			"/collaborators**"
+	};
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+	private static final String[] PUBLIC_MATCHERS_POST = {
+			"/timesheets**",
+			"/collaborators**"
+	};
+	
+	private static final String[] PUBLIC_MATCHERS_GET = {
+			"/timesheets**",
+			"/collaborators**",
+			"/api/v1/auth**",
+			"/api/v1/timesheets**",
+	};
 
-	@Bean
-	public JwtAuthenticationTokenFilter authenticationTokenFilterBean() throws Exception {
-		return new JwtAuthenticationTokenFilter();
-	}
-
+	
 	@Bean(name = BeanIds.AUTHENTICATION_MANAGER)
 	@Override
 	public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -53,11 +67,33 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
-		httpSecurity.csrf().disable().exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
-		.antMatchers("/auth/**").permitAll().anyRequest().authenticated();
-		httpSecurity.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
-		httpSecurity.headers().cacheControl();
+		httpSecurity.cors().and().csrf().disable();
+		httpSecurity.authorizeRequests()
+		.antMatchers(HttpMethod.POST, PUBLIC_MATCHERS).permitAll()
+		.antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
+		.antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll()
+		.anyRequest().authenticated();
+		httpSecurity.addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtTokenUtil));
+		httpSecurity.addFilter(new JwtAuthorizationFilter(authenticationManager(), jwtTokenUtil, userDetailsService));
+		httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+	}
+	
+	@Bean
+	CorsConfigurationSource corsConfigurationSource() {
+		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+		return source;
+	}
+	
+	@Autowired
+	public void configureAuthentication(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(this.userDetailsService).passwordEncoder(bCryptpasswordEncoder());
+	}
+	
+	
+	@Bean
+	public PasswordEncoder bCryptpasswordEncoder() {
+		return new BCryptPasswordEncoder();
 	}
 
 }

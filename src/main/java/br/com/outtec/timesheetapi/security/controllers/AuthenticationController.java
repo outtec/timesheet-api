@@ -25,9 +25,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.outtec.utils.Response;
-
+import br.com.outtec.timesheetapi.security.JwtUser;
+import br.com.outtec.timesheetapi.security.JwtUserFactory;
 import br.com.outtec.timesheetapi.security.dtos.JwtAuthenticationDto;
 import br.com.outtec.timesheetapi.security.dtos.TokenDto;
+import br.com.outtec.timesheetapi.security.services.UserService;
 import br.com.outtec.timesheetapi.security.utils.JwtTokenUtil;
 
 @RestController
@@ -47,7 +49,7 @@ public class AuthenticationController {
 
 	@Autowired
 	private UserDetailsService userDetailsService;
-
+	
 	/**
 	 * Gera e retorna um novo token JWT.
 	 * 
@@ -88,6 +90,9 @@ public class AuthenticationController {
 		
 		UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationDto.getEmail());
 		String token = jwtTokenUtil.obterToken(userDetails);
+
+		//JwtUser user = JwtUserFactory.authenticated();
+		//String token = jwtTokenUtil.generateToken(user.getUsername());
 		response.addHeader("Authorization", "Bearer " + token);
 		response.addHeader("access-control-expose-headers", "Authorization");
 		return ResponseEntity.noContent().build();
@@ -100,9 +105,9 @@ public class AuthenticationController {
 	 * @return ResponseEntity<Response<TokenDto>>
 	 */
 	@PostMapping(value = "/refresh")
-	public ResponseEntity<Response<TokenDto>> gerarRefreshTokenJwt(HttpServletRequest request) {
+	public ResponseEntity<Response<TokenDto>> gerarRefreshTokenJwt(HttpServletRequest request,HttpServletResponse response) {
 		log.info("Gerando refresh token JWT.");
-		Response<TokenDto> response = new Response<TokenDto>();
+		Response<TokenDto> res = new Response<TokenDto>();
 		Optional<String> token = Optional.ofNullable(request.getHeader(TOKEN_HEADER));
 
 		if (token.isPresent() && token.get().startsWith(BEARER_PREFIX)) {
@@ -110,19 +115,19 @@ public class AuthenticationController {
 		}
 
 		if (!token.isPresent()) {
-			response.getErrors().add("Token não informado.");
+			res.getErrors().add("Token não informado.");
 		} else if (!jwtTokenUtil.tokenValido(token.get())) {
-			response.getErrors().add("Token invalido ou expirado.");
+			res.getErrors().add("Token invalido ou expirado.");
 		}
 
-		if (!response.getErrors().isEmpty()) {
-			return ResponseEntity.badRequest().body(response);
+		if (!res.getErrors().isEmpty()) {
+			return ResponseEntity.badRequest().body(res);
 		}
 
 		String refreshedToken = jwtTokenUtil.refreshToken(token.get());
-		response.setData(new TokenDto(refreshedToken));
-
-		return ResponseEntity.ok(response);
+		response.addHeader("Authorization", "Bearer " + refreshedToken);
+		response.addHeader("access-control-expose-headers", "Authorization");
+		return ResponseEntity.noContent().build();
 	}
 
 }

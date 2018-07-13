@@ -1,9 +1,14 @@
 package br.com.outtec.timesheetapi.security;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import br.com.outtec.timesheetapi.enums.Perfil;
 
 public class JwtUser implements UserDetails {
 
@@ -13,12 +18,15 @@ public class JwtUser implements UserDetails {
 	private String username;
 	private String password;
 	private Collection<? extends GrantedAuthority> authorities;
-
-	public JwtUser(Long id, String username, String password, Collection<? extends GrantedAuthority> authorities) {
+	
+	
+	public JwtUser(Long id, String username, String password, Set<Perfil> perfis) {
+		super();
 		this.id = id;
 		this.username = username;
 		this.password = password;
-		this.authorities = authorities;
+		this.authorities = perfis.stream().map(x -> new SimpleGrantedAuthority(x.getDescricao())).collect(Collectors.toList());
+		
 	}
 
 	public Long getId() {
@@ -58,6 +66,10 @@ public class JwtUser implements UserDetails {
 	@Override
 	public boolean isEnabled() {
 		return true;
+	}
+	
+	public boolean hasRole(Perfil perfil) {
+		return getAuthorities().contains(new SimpleGrantedAuthority(perfil.getDescricao()));
 	}
 
 }

@@ -2,12 +2,14 @@ package br.com.outtec.timesheetapi.security;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import br.com.outtec.timesheetapi.security.domain.User;
-import br.com.outtec.timesheetapi.enums.PerfilEnum;
+import br.com.outtec.timesheetapi.enums.Perfil;
 
 public class JwtUserFactory {
 
@@ -20,8 +22,7 @@ public class JwtUserFactory {
 	 * @return JwtUser
 	 */
 	public static JwtUser create(User user) {
-		return new JwtUser(user.getId(), user.getEmail(), user.getSenha(),
-				mapToGrantedAuthorities(user.getPerfil()));
+		return new JwtUser(user.getId(), user.getEmail(), user.getSenha(),null);
 	}
 
 	/**
@@ -30,10 +31,20 @@ public class JwtUserFactory {
 	 * @param perfilEnum
 	 * @return List<GrantedAuthority>
 	 */
-	private static List<GrantedAuthority> mapToGrantedAuthorities(PerfilEnum perfilEnum) {
-		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-		authorities.add(new SimpleGrantedAuthority(perfilEnum.toString()));
+	private static ArrayList<GrantedAuthority> mapToGrantedAuthorities(Perfil perfil) {
+		ArrayList<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+		authorities.add(new SimpleGrantedAuthority(perfil.toString()));
 		return authorities;
+	}
+	
+	public static JwtUser authenticated() {
+		try {
+			return (JwtUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+		}catch(Exception e){
+			return null;
+		}
+		
 	}
 
 }

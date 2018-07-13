@@ -1,10 +1,13 @@
 package br.com.outtec.timesheetapi.security.dtos;
 
+import java.io.Serializable;
+
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
-public class JwtAuthenticationDto {
-
+public class JwtAuthenticationDto implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
 	private String email;
 	private String senha;
 

@@ -153,5 +153,18 @@ public class JwtTokenUtil {
 		return Jwts.builder().setClaims(claims).setExpiration(gerarDataExpiracao())
 				.signWith(SignatureAlgorithm.HS512, secret).compact();
 	}
+	
+	/**
+	 * 
+	 * @param username
+	 * @return
+	 */
+	public String generateToken(String username) {
+		return Jwts.builder()
+				.setSubject(username)
+				.setExpiration(gerarDataExpiracao())
+				.signWith(SignatureAlgorithm.HS512, secret.getBytes())
+				.compact();
+	}
 
 }

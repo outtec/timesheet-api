@@ -14,7 +14,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import br.com.outtec.timesheetapi.domain.Collaborator;
-import br.com.outtec.timesheetapi.enums.PerfilEnum;
 import br.com.outtec.timesheetapi.repositories.CollaboratorRepository;
 import br.com.outtec.timesheetapi.security.domain.User;
 import br.com.outtec.timesheetapi.security.repositories.UserRepository;

@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import br.com.outtec.timesheetapi.domain.Collaborator;
 import br.com.outtec.timesheetapi.domain.Timesheet;
-import br.com.outtec.timesheetapi.enums.PerfilEnum;
+import br.com.outtec.timesheetapi.enums.Perfil;
 import br.com.outtec.timesheetapi.repositories.CollaboratorRepository;
 import br.com.outtec.timesheetapi.repositories.TimesheetRepository;
 import br.com.outtec.utils.PasswordUtils;
@@ -90,7 +90,7 @@ public class TimesheetRespositoryTest {
 		Collaborator collaborator = new Collaborator();
 		collaborator.setName("Josenildo");
 		collaborator.setPassword(PasswordUtils.getBCrypt("Senha123"));
-		collaborator.setPerfil(PerfilEnum.ROLE_USER);
+		collaborator.setPerfil(Perfil.USER);
 		return collaborator;
 	}
 

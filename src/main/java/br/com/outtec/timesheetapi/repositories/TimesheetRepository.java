@@ -29,7 +29,7 @@ public interface TimesheetRepository extends JpaRepository<Timesheet,Long>  {
 	Page<Timesheet> findByCollaboratorId(@Param("collaboratorId") Long collabodatorId ,Pageable pegeable);
 	
 	Optional<Timesheet> findByStartDateTimeAndEndDateTime(Date startDateTime, Date endDateTime);
-	
+	Optional<Timesheet> findById(Long Id);
 	List<Timesheet> findByStartDateTimeAndEndDateTimeAndCollaborator(Date startDateTime,Date endDateTime,Collaborator collaborator);
 	Page<Timesheet> findByCollaboratorBetween(Date startDateTime,Date endDateTime, Pageable pegeable);
 	
