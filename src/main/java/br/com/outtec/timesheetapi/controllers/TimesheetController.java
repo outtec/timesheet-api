@@ -1,7 +1,5 @@
 package br.com.outtec.timesheetapi.controllers;
 
-import java.net.URI;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -17,7 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -30,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.outtec.timesheetapi.domain.Collaborator;
 import br.com.outtec.timesheetapi.domain.Timesheet;
@@ -45,8 +42,8 @@ public class TimesheetController {
 
 	private static final Logger log = LoggerFactory.getLogger(TimesheetController.class);
 
-	DateFormat dateformat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
-	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+	//DateFormat dateformat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
+	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); //"dd/MM/yyyy HH:mm"
 
 	@Autowired
 	private TimesheetService timesheetService;
@@ -69,6 +66,23 @@ public class TimesheetController {
 		Page<TimesheetDto> timesheetDto = timesheets.map(timesheet -> this.converterTimesheetParaDto(timesheet));
 		response.setData(timesheetDto);
 		return ResponseEntity.ok(response);
+	}
+	
+	@GetMapping("timesheets/collaborator")
+	public ResponseEntity<Response<Page<TimesheetDto>>> getTimesheetsByDay(
+			@RequestParam(value = "collaboratorid") long collaboratorId,
+			@RequestParam(value = "date") Date date,
+			@RequestParam(value = "pag", defaultValue = "0") int pag,
+			@RequestParam(value = "ord", defaultValue = "id") String ord,
+			@RequestParam(value = "dir", defaultValue = "DESC") String dir){
+		log.info("Buscando lançamentos por ID do colaborador: {}, página: {}", collaboratorId, date);
+		Response<Page<TimesheetDto>> response = new Response<Page<TimesheetDto>>();
+		PageRequest pageRequest = new PageRequest(pag, this.qtdPorPagina,Direction.valueOf(dir), ord);
+		Page<Timesheet> timesheets = timesheetService.findByCollaboratorIdAndStarDateTime(collaboratorId, date,pageRequest);
+		Page<TimesheetDto> timesheetDto = timesheets.map(timesheet -> this.converterTimesheetParaDto(timesheet));
+		response.setData(timesheetDto);
+		return ResponseEntity.ok(response);
+
 	}
 	
 	/**
@@ -120,24 +134,6 @@ public class TimesheetController {
 			return ResponseEntity.ok(response);
 		}
 	}
-	/**
-	 * 
-	 * @param obj
-	 * @param result
-	 * @return
-	 * @throws ParseException
-	**/
-	/**
-	 * 
-	@PostMapping("timesheets")
-	public ResponseEntity<Void> insert(@Valid @RequestBody TimesheetDto obj, BindingResult result) throws ParseException {
-		Timesheet timesheet = this.timesheetService.save(this.convertDtoParaTimesheet(obj,result));
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-				.path("/{id}").buildAndExpand(obj.getId()).toUri();
-		return ResponseEntity.created(uri).build();
-	}
-	*/
-
 	
 	/**
 	 * Atualiza os dados de um período de horas
@@ -223,8 +219,10 @@ public class TimesheetController {
 	private TimesheetDto converterTimesheetParaDto(Timesheet timesheet) {
 		TimesheetDto timesheetDto = new TimesheetDto();
 		timesheetDto.setId(Optional.of(timesheet.getId()));
-		timesheetDto.setEndDateTime(dateformat.format(timesheet.getEndDateTime()));
-		timesheetDto.setStartDateTime(dateformat.format(timesheet.getStartDateTime()));
+		timesheetDto.setEndDateTime(timesheet.getEndDateTime().toString());
+		timesheetDto.setStartDateTime(timesheet.getStartDateTime().toString());
+		//timesheetDto.setEndDateTime(dateformat.format(timesheet.getEndDateTime()));
+		//timesheetDto.setStartDateTime(dateformat.format(timesheet.getStartDateTime()));
 		timesheetDto.setIsHoliday(timesheet.getIsHoliday());
 		timesheetDto.setIsInTravel(timesheet.getIsInTravel());
 		timesheetDto.setPeriodDescription(timesheet.getPeriodDescription());

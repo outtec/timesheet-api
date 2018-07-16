@@ -70,5 +70,9 @@ public class TimesheetServiceImpl implements TimesheetService{
 	public Page<Timesheet> getByPeriod(Date startDate, Date endDate, PageRequest pageRequest) {
 		return this.timesheetRepository.findByCollaboratorBetween(startDate, endDate,pageRequest);
 	}
+	
+	public Page<Timesheet> findByCollaboratorIdAndStarDateTime(Long collaboratorId, Date startDateTime, PageRequest pageRequest) {
+		return this.timesheetRepository.findByCollaboratorIdAndStartDateTime(collaboratorId, startDateTime, pageRequest);
+	}
 
 }

@@ -26,12 +26,20 @@ import br.com.outtec.timesheetapi.domain.Timesheet;
 public interface TimesheetRepository extends JpaRepository<Timesheet,Long>  {
 
 	List<Timesheet> findByCollaboratorId(@Param("collaboratorId") Long collabodatorId);
+	
 	Page<Timesheet> findByCollaboratorId(@Param("collaboratorId") Long collabodatorId ,Pageable pegeable);
 	
 	Optional<Timesheet> findByStartDateTimeAndEndDateTime(Date startDateTime, Date endDateTime);
+	
 	Optional<Timesheet> findById(Long Id);
+	
 	List<Timesheet> findByStartDateTimeAndEndDateTimeAndCollaborator(Date startDateTime,Date endDateTime,Collaborator collaborator);
+	
 	Page<Timesheet> findByCollaboratorBetween(Date startDateTime,Date endDateTime, Pageable pegeable);
 	
+	Page<Timesheet> findByCollaboratorIdAndStartDateTime(Long collaboratorId, Date startDateTime, Pageable pegeable);
 	
+	List<Timesheet> findByCollaboratorIdAndStartDateTime(Long collaboratorId, Date startDateTime);
+	
+	List<Timesheet> findByStartDateTime(Date startDateTime);
 }

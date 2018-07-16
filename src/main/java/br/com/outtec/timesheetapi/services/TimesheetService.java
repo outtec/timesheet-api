@@ -59,4 +59,12 @@ public interface TimesheetService {
 	 */
 	boolean checkExistingTimesheet(Timesheet obj);
 	
+	/**
+	 * 
+	 * @param id
+	 * @param starDateTime
+	 * @return A list of timessheets by Day
+	 */
+	Page<Timesheet> findByCollaboratorIdAndStarDateTime(Long id, Date startDateTime,PageRequest pageRequest);
+	
 }

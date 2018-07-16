@@ -37,7 +37,7 @@ public class TimesheetRespositoryTest {
 
 	Timesheet timesheet = new Timesheet();
 	Collaborator collaborator =  new Collaborator();
-	
+
 	@Before
 	public void setUp()throws Exception{
 		collaborator =  this.collaboratorRepository.save(getCollaboratorData());
@@ -45,8 +45,7 @@ public class TimesheetRespositoryTest {
 		timesheet = this.timehseetRepository.save(getTimesheetData(collaborator));
 		this.timehseetRepository.save(getTimesheetData1(collaborator));
 	}
-	
-	
+		
 	@Test
 	public void testfindByCollaboratorId() {
 		List<Timesheet> timesheets = this.timehseetRepository.findByCollaboratorId(collaborator.getId());
@@ -58,12 +57,27 @@ public class TimesheetRespositoryTest {
 		assertEquals(2,timesheets.size());
 	}
 
+	@Test 
+	public void testfindByDate() {
+		List<Timesheet> timesheets = this.timehseetRepository.findByStartDateTime(new Date());
+		System.out.println("Lista de Timesheets por dia : "+ timesheets.get(0).getPeriodDescription());
+		assertEquals(2, timesheets.size());
+		
+	}
 	@Test
 	public void testfindByStartDateTimeAndEndDateTimeAndCollaborator(){
 		List<Timesheet> timesheets = this.timehseetRepository.findByStartDateTimeAndEndDateTimeAndCollaborator(timesheet.getStartDateTime(), timesheet.getEndDateTime(),collaborator);
 		assertEquals(1,timesheets.size());	
 	}
 	
+	
+	
+	@Test 
+	public void testfindByCollaboratorIdAndDate() {
+		List<Timesheet> timesheets = this.timehseetRepository.findByCollaboratorIdAndStartDateTime(collaborator.getId(), timesheet.getStartDateTime());
+		System.out.println("Lista de Timesheets por dia : "+ timesheets.get(0).getPeriodDescription());
+		
+	}
 	private Timesheet getTimesheetData(Collaborator collaborator) {
 		Timesheet timesheet = new Timesheet();
 		timesheet.setCollaborator(collaborator);
