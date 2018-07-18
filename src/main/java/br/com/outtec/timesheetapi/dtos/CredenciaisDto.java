@@ -1,17 +1,17 @@
-package br.com.outtec.timesheetapi.security.dtos;
+package br.com.outtec.timesheetapi.dtos;
 
 import java.io.Serializable;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 
-public class JwtAuthenticationDto implements Serializable {
+public class CredenciaisDto implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private String email;
 	private String password;
 
-	public JwtAuthenticationDto() {
+	public CredenciaisDto() {
 	}
 	@NotEmpty(message = "Email não pode ser vazio.")
 	@Email(message = "Email inválido.")

@@ -6,13 +6,11 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,7 +27,7 @@ import br.com.outtec.timesheetapi.services.CollaboratorService;
 import javassist.tools.rmi.ObjectNotFoundException;
 
 @RestController
-@RequestMapping("api/v1/collaborators")
+@RequestMapping("/collaborators")
 @CrossOrigin(origins = "*")
 public class CollaboratorController {
 
@@ -69,14 +67,13 @@ public class CollaboratorController {
 		return ResponseEntity.noContent().build();
 	}
 	
-	@PreAuthorize("hasAnyRole('ADMIN')")
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
 	public ResponseEntity<Void> delete(@PathVariable Long id) throws ObjectNotFoundException {
 		service.delete(id);
 		return ResponseEntity.noContent().build();
 	}
 	
-	@PreAuthorize("hasAnyRole('ADMIN')")
+
 	@RequestMapping(method=RequestMethod.GET)
 	public ResponseEntity<List<CollaboratorDto>> findAll() {
 		List<Collaborator> list = service.findAll();
@@ -84,7 +81,6 @@ public class CollaboratorController {
 		return ResponseEntity.ok().body(listDto);
 	}
 	
-	@PreAuthorize("hasAnyRole('ADMIN')")
 	@RequestMapping(value="/page", method=RequestMethod.GET)
 	public ResponseEntity<Page<CollaboratorDto>> findPage(
 			@RequestParam(value="page", defaultValue="0") Integer page, 

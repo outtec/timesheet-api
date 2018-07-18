@@ -12,18 +12,18 @@ import br.com.outtec.timesheetapi.enums.Perfil;
 
 public class JwtUser implements UserDetails {
 
-	private static final long serialVersionUID = -268046329085485932L;
+	private static final long serialVersionUID = 1L;
 
 	private Long id;
-	private String username;
+	private String email;
 	private String password;
 	private Collection<? extends GrantedAuthority> authorities;
 	
 	
-	public JwtUser(Long id, String username, String password, Set<Perfil> perfis) {
+	public JwtUser(Long id, String email, String password, Set<Perfil> perfis) {
 		super();
 		this.id = id;
-		this.username = username;
+		this.email = email;
 		this.password = password;
 		this.authorities = perfis.stream().map(x -> new SimpleGrantedAuthority(x.getDescricao())).collect(Collectors.toList());
 		
@@ -35,7 +35,7 @@ public class JwtUser implements UserDetails {
 
 	@Override
 	public String getUsername() {
-		return username;
+		return email;
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package br.com.outtec.timesheetapi.security.filters;
+package br.com.outtec.timesheetapi.security;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,20 +18,18 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import br.com.outtec.timesheetapi.security.JwtUser;
-import br.com.outtec.timesheetapi.security.dtos.JwtAuthenticationDto;
-import br.com.outtec.timesheetapi.security.utils.JwtTokenUtil;
+import br.com.outtec.timesheetapi.dtos.CredenciaisDto;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 	
 	private AuthenticationManager authenticationManager;
 	
-	private JwtTokenUtil jwtTokenUtil;
+	private JWTUtil jwtUtil;
 	
-	public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil) {
+	public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil) {
 		setAuthenticationFailureHandler(new JWTAuthenticationFailureHandler());
         this.authenticationManager = authenticationManager;
-        this.jwtTokenUtil = jwtTokenUtil;
+        this.jwtUtil = jwtUtil;
 	}
 
 	@Override
@@ -39,8 +37,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                                 HttpServletResponse res) throws AuthenticationException {
 
 		try {
-			JwtAuthenticationDto creds = new ObjectMapper()
-	                .readValue(req.getInputStream(), JwtAuthenticationDto.class);
+			CredenciaisDto creds = new ObjectMapper()
+	                .readValue(req.getInputStream(), CredenciaisDto.class);
 	
 	        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(creds.getEmail(), creds.getPassword(), new ArrayList<>());
 	        
@@ -59,9 +57,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             Authentication auth) throws IOException, ServletException {
 	
 		String username = ((JwtUser) auth.getPrincipal()).getUsername();
-        String token = jwtTokenUtil.generateToken(username);
+        String token = jwtUtil.generateToken(username);
         res.addHeader("Authorization", "Bearer " + token);
-        res.addHeader("access-control-expose-headers", "Authorization");
 	}
 	
 	private class JWTAuthenticationFailureHandler implements AuthenticationFailureHandler {

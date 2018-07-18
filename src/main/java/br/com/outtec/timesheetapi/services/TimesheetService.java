@@ -8,7 +8,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import br.com.outtec.timesheetapi.domain.Timesheet;
-import br.com.outtec.utils.Response;
 
 public interface TimesheetService {
 	
