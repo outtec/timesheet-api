@@ -1,4 +1,4 @@
-package br.com.outtec.timesheetapi.security.services.impl;
+package br.com.outtec.timesheetapi.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,20 +11,19 @@ import br.com.outtec.timesheetapi.repositories.CollaboratorRepository;
 import br.com.outtec.timesheetapi.security.JwtUser;
 
 @Service
-public class JwtUserDetailsServiceImpl implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
 
 	@Autowired
 	private CollaboratorRepository repo;
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		Collaborator user = repo.findByEmail(email);
-
-		if (user == null) {
+		Collaborator collaborator = repo.findByEmail(email);
+		if (collaborator == null) {
 			throw new UsernameNotFoundException(email);
 		}
 
-		return new JwtUser(user.getId(), user.getEmail(), user.getPassword(), user.getPerfis());
+		return new JwtUser(collaborator.getId(), collaborator.getEmail(), collaborator.getPassword(), collaborator.getPerfis());
 	}
 		
 }

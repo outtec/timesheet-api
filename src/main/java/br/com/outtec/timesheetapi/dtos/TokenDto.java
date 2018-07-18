@@ -1,4 +1,4 @@
-package br.com.outtec.timesheetapi.security.dtos;
+package br.com.outtec.timesheetapi.dtos;
 
 public class TokenDto {
 

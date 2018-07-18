@@ -15,7 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -26,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,13 +36,12 @@ import br.com.outtec.timesheetapi.services.TimesheetService;
 import br.com.outtec.utils.Response;
 
 @RestController
-@RequestMapping("api/v1/")
+@RequestMapping("/timesheets")
 @CrossOrigin(origins = "*")
 public class TimesheetController {
 
 	private static final Logger log = LoggerFactory.getLogger(TimesheetController.class);
 
-	//DateFormat dateformat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
 	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); //"dd/MM/yyyy HH:mm"
 
 	@Autowired
@@ -53,7 +52,7 @@ public class TimesheetController {
 
 	public TimesheetController() {}
 
-	@GetMapping("timesheets")
+	@RequestMapping(method=RequestMethod.GET)
 	public ResponseEntity<Response<Page<TimesheetDto>>> getTimesheetsByCollaboratorId(
 			@RequestParam(value = "collaboratorid") long collaboratorId,
 			@RequestParam(value = "pag", defaultValue = "0") int pag,
@@ -68,29 +67,13 @@ public class TimesheetController {
 		return ResponseEntity.ok(response);
 	}
 	
-	@GetMapping("timesheets/collaborator")
-	public ResponseEntity<Response<Page<TimesheetDto>>> getTimesheetsByDay(
-			@RequestParam(value = "collaboratorid") long collaboratorId,
-			@RequestParam(value = "date") Date date,
-			@RequestParam(value = "pag", defaultValue = "0") int pag,
-			@RequestParam(value = "ord", defaultValue = "id") String ord,
-			@RequestParam(value = "dir", defaultValue = "DESC") String dir){
-		log.info("Buscando lançamentos por ID do colaborador: {}, página: {}", collaboratorId, date);
-		Response<Page<TimesheetDto>> response = new Response<Page<TimesheetDto>>();
-		PageRequest pageRequest = new PageRequest(pag, this.qtdPorPagina,Direction.valueOf(dir), ord);
-		Page<Timesheet> timesheets = timesheetService.findByCollaboratorIdAndStarDateTime(collaboratorId, date,pageRequest);
-		Page<TimesheetDto> timesheetDto = timesheets.map(timesheet -> this.converterTimesheetParaDto(timesheet));
-		response.setData(timesheetDto);
-		return ResponseEntity.ok(response);
 
-	}
-	
 	/**
 	 * Retorna uma entrada cadastrada por ID
 	 * @param id
 	 * @return Timesheet
 	 */
-	@GetMapping("timesheets/{id}")
+	@RequestMapping(value="/{id}", method=RequestMethod.GET)
 	public ResponseEntity<Response<TimesheetDto>> getByID(@PathVariable("id") long id){
 		log.info("Buscando lançamento por ID: {}", id);
 		Response<TimesheetDto> response = new Response<TimesheetDto>();
@@ -113,7 +96,7 @@ public class TimesheetController {
 	 * @throws ParseException 
 	 *
 	 * */
-	@PostMapping("timesheets") 
+	@RequestMapping(method=RequestMethod.POST) 
 	public ResponseEntity<Response<TimesheetDto>> save(@Valid @RequestBody TimesheetDto timesheetDto, 
 			BindingResult result) throws ParseException{ 
 		log.info("Adicionando lançamento: {}", timesheetDto.toString()); 
@@ -143,7 +126,7 @@ public class TimesheetController {
 	 * @return timsheet
 	 * @throws ParseException
 	 */
-	@PutMapping("timesheets/{id}")
+	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
 	public ResponseEntity<Response<TimesheetDto>> update(@PathVariable("id") Long id, @Valid @RequestBody TimesheetDto timesheetDto,
 			BindingResult result) throws ParseException{
 		Response<TimesheetDto> response = new Response<TimesheetDto>();
@@ -173,7 +156,7 @@ public class TimesheetController {
 	 * @param id
 	 * @return response
 	 */
-	@DeleteMapping("timesheets/{id}")
+	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
 	public ResponseEntity<Response<String>> delete(@PathVariable("id") Long id){
 		Response<String> response = new Response<String>();
 		Optional<Timesheet> timesheet = timesheetService.findByID(id);
@@ -221,8 +204,6 @@ public class TimesheetController {
 		timesheetDto.setId(Optional.of(timesheet.getId()));
 		timesheetDto.setEndDateTime(timesheet.getEndDateTime().toString());
 		timesheetDto.setStartDateTime(timesheet.getStartDateTime().toString());
-		//timesheetDto.setEndDateTime(dateformat.format(timesheet.getEndDateTime()));
-		//timesheetDto.setStartDateTime(dateformat.format(timesheet.getStartDateTime()));
 		timesheetDto.setIsHoliday(timesheet.getIsHoliday());
 		timesheetDto.setIsInTravel(timesheet.getIsInTravel());
 		timesheetDto.setPeriodDescription(timesheet.getPeriodDescription());

@@ -1,11 +1,10 @@
-package br.com.outtec.timesheetapi.security.config;
+package br.com.outtec.timesheetapi.config;
 
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
@@ -17,53 +16,43 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-
-import br.com.outtec.timesheetapi.security.filters.JwtAuthenticationFilter;
-import br.com.outtec.timesheetapi.security.filters.JwtAuthorizationFilter;
-import br.com.outtec.timesheetapi.security.utils.JwtTokenUtil;
+import br.com.outtec.timesheetapi.security.JWTUtil;
+import br.com.outtec.timesheetapi.security.JwtAuthenticationFilter;
+import br.com.outtec.timesheetapi.security.JwtAuthorizationFilter;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private UserDetailsService userDetailsService;
 
 	@Autowired
-	private Environment env;
-
-	@Autowired
-	private JwtTokenUtil jwtTokenUtil;
+	private JWTUtil jwtUtil;
 
 	private static final String[] PUBLIC_MATCHERS = {
-			"/timesheets**",
-			"/api/v1/**",
-			"/api/v1/timesheets**",
-			"/api/v1/timesheets/**",
-			"/api/v1/collaborators/"
+			
 	};
 
 	private static final String[] PUBLIC_MATCHERS_POST = {
-			"/api/v1/timesheets/**",
-			"/collaborators**"
+			"/timesheets/**",
+			"/collaborators/**"
 	};
 
 	private static final String[] PUBLIC_MATCHERS_PUT = {
-			"/api/v1/timesheets/{id}**"
+			"/timesheets/**",
+			"/collaborators/**",
 	};
 
 	private static final String[] PUBLIC_MATCHERS_GET = {
-			"/timesheets**",
-			 "/api/v1/collaborators",
-			"/api/v1/auth**",
-			"/api/v1/timesheets/**",
-			"/api/v1/timesheets/collaborator**"
+			"/timesheets/**",
+			"/collaborators/**",
+			"/auth/forgot/**"
 	};
 
 
@@ -77,24 +66,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.cors().and().csrf().disable();
 		httpSecurity.authorizeRequests()
-		.antMatchers(HttpMethod.POST, PUBLIC_MATCHERS).permitAll()
 		.antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
 		.antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll()
-		.antMatchers(HttpMethod.PUT, PUBLIC_MATCHERS_PUT).permitAll()
+		.antMatchers(PUBLIC_MATCHERS).permitAll()
 		.anyRequest().authenticated();
-		httpSecurity.addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtTokenUtil));
-		httpSecurity.addFilter(new JwtAuthorizationFilter(authenticationManager(), jwtTokenUtil, userDetailsService));
+		httpSecurity.addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtUtil));
+		httpSecurity.addFilter(new JwtAuthorizationFilter(authenticationManager(), jwtUtil, userDetailsService));
 		httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
-
-
 
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		final CorsConfiguration configuration = new CorsConfiguration();
 		configuration.setAllowedOrigins(Arrays.asList("*"));
-		configuration.setAllowedMethods(Arrays.asList("HEAD",
-				"GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE","OPTIONS"));
 		configuration.setAllowCredentials(true);
 		configuration.setAllowedHeaders(Arrays.asList("*"));
 		configuration.setExposedHeaders(Arrays.asList("X-Auth-Token","Authorization","Access-Control-Allow-Origin","Access-Control-Allow-Credentials"));
@@ -104,7 +89,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 
 	@Autowired
-	public void configureAuthentication(AuthenticationManagerBuilder auth) throws Exception {
+	public void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(this.userDetailsService).passwordEncoder(bCryptpasswordEncoder());
 	}
 

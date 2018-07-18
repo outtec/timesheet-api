@@ -2,7 +2,6 @@ package br.com.outtec.timesheetapi.services;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
