@@ -43,11 +43,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private static final String[] PUBLIC_MATCHERS = {
 			"/timesheets**",
-			"/collaborators**",
 			"/api/v1/**",
 			"/api/v1/timesheets**",
 			"/api/v1/timesheets/**",
-			"/collaborators**"
+			"/api/v1/collaborators/"
 	};
 
 	private static final String[] PUBLIC_MATCHERS_POST = {
@@ -61,7 +60,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private static final String[] PUBLIC_MATCHERS_GET = {
 			"/timesheets**",
-			"/collaborators**",
+			 "/api/v1/collaborators",
 			"/api/v1/auth**",
 			"/api/v1/timesheets/**",
 			"/api/v1/timesheets/collaborator**"
@@ -111,7 +110,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
 	@Bean
-	public PasswordEncoder bCryptpasswordEncoder() {
+	public BCryptPasswordEncoder bCryptpasswordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 
