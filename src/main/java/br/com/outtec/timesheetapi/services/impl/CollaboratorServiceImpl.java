@@ -1,5 +1,6 @@
 package br.com.outtec.timesheetapi.services.impl;
 
+import java.awt.image.BufferedImage;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -9,6 +10,7 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +25,8 @@ import br.com.outtec.timesheetapi.repositories.CollaboratorRepository;
 import br.com.outtec.timesheetapi.security.JwtUser;
 import br.com.outtec.timesheetapi.security.JwtUserFactory;
 import br.com.outtec.timesheetapi.services.CollaboratorService;
+import br.com.outtec.timesheetapi.services.ImageService;
+import br.com.outtec.timesheetapi.services.S3Service;
 import br.com.outtec.timesheetapi.services.exceptions.AuthorizationException;
 import br.com.outtec.timesheetapi.services.exceptions.DataIntegrityException;
 import br.com.outtec.utils.PasswordUtils;
@@ -33,8 +37,21 @@ import javassist.tools.rmi.ObjectNotFoundException;
 public class CollaboratorServiceImpl  implements CollaboratorService{
 	
 	private static final Logger log = LoggerFactory.getLogger(CollaboratorServiceImpl.class);
+	
 	@Autowired
 	private CollaboratorRepository repo;
+	
+	@Autowired
+	private S3Service s3Service;
+	
+	@Autowired
+	private ImageService imageService;
+		
+	@Value("${img.prefix.collaborator.profile}")
+	private String prefix;
+	
+	@Value("${img.profile.size}")
+	private Integer size;
 	
 public Collaborator find(Long id) throws ObjectNotFoundException {
 		
@@ -107,10 +124,19 @@ public Collaborator find(Long id) throws ObjectNotFoundException {
 	}
 	
 
-	@Override
-	public URI uploadProfilePicture(MultipartFile file) {
-		// TODO Auto-generated method stub
-		return null;
+	public URI uploadProfilePicture(MultipartFile multipartFile) {
+		JwtUser user = JwtUserFactory.authenticated();
+		if (user == null) {
+			throw new AuthorizationException("Acesso negado");
+		}
+		
+		BufferedImage jpgImage = imageService.getJpgImageFromFile(multipartFile);
+		jpgImage = imageService.cropSquare(jpgImage);
+		jpgImage = imageService.resize(jpgImage, size);
+		
+		String fileName = prefix + user.getId() + ".jpg";
+		
+		return s3Service.uploadFile(imageService.getInputStream(jpgImage, "jpg"), fileName, "image");
 	}
 
 	
