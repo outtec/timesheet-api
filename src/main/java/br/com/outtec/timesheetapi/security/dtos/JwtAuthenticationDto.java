@@ -2,14 +2,14 @@ package br.com.outtec.timesheetapi.security.dtos;
 
 import java.io.Serializable;
 
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 
 public class JwtAuthenticationDto implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private String email;
-	private String senha;
+	private String password;
 
 	public JwtAuthenticationDto() {
 	}
@@ -24,17 +24,12 @@ public class JwtAuthenticationDto implements Serializable {
 	}
 
 	@NotEmpty(message = "Senha não pode ser vazia.")
-	public String getSenha() {
-		return senha;
+	public String getPassword() {
+		return password;
 	}
 
-	public void setSenha(String senha) {
-		this.senha = senha;
-	}
-
-	@Override
-	public String toString() {
-		return "JwtAuthenticationRequestDto [email=" + email + ", senha=" + senha + "]";
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 }

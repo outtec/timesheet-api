@@ -1,8 +1,27 @@
 package br.com.outtec.timesheetapi.domain;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
-import javax.persistence.*;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import br.com.outtec.timesheetapi.enums.Perfil;
 
 @Entity
@@ -14,13 +33,34 @@ public class Collaborator implements Serializable {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	private String name;
+	
+	@Column(unique=true)
+	private String email;
+	
+	@JsonIgnore
 	private String password;
-	private Perfil perfil;
+	
+	@ElementCollection(fetch=FetchType.EAGER)
+	@CollectionTable(name="PERFIS")
+	private Set<Integer> perfis = new HashSet<>();
 	
 	@OneToMany(targetEntity= Timesheet.class, mappedBy = "collaborator", fetch = FetchType.LAZY, cascade = CascadeType.ALL )
 	private List<Timesheet> timesheets;
+	
+	
+	
+	public Collaborator() {
+		addPerfil(Perfil.USER);
+	}
 
-	public Collaborator() {}
+	public Collaborator(Long id, String name, String email, String password) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.email = email;
+		this.password = password;
+		addPerfil(Perfil.USER);
+	}
 
 	public Long getId() {
 		return id;
@@ -46,16 +86,14 @@ public class Collaborator implements Serializable {
 		this.password = password;
 	}
 	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "perfil", nullable = false)
-	public Perfil getPerfil() {
-		return perfil;
+	public Set<Perfil> getPerfis() {
+		return perfis.stream().map(x -> Perfil.toEnum(x)).collect(Collectors.toSet());
 	}
-
-	public void setPerfil(Perfil perfil) {
-		this.perfil = perfil;
+	
+	public void addPerfil(Perfil perfil) {
+		perfis.add(perfil.getCod());
 	}
-
+	
 	public List<Timesheet> gettimesheets() {
 		return timesheets;
 	}
@@ -91,10 +129,16 @@ public class Collaborator implements Serializable {
 	
 	@Override
 	public String toString() {
-		return "Collaborator [Id=" + id + ", name=" + name + ", password=" + password + ", perfil="
-				+ perfil + "]";
+		return "Collaborator [Id=" + id + ", name=" + name + ", password=" + password +  "]";
 	}
 
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
 
 

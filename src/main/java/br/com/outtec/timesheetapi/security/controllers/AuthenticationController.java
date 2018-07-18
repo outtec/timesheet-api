@@ -24,13 +24,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.outtec.utils.Response;
-import br.com.outtec.timesheetapi.security.JwtUser;
-import br.com.outtec.timesheetapi.security.JwtUserFactory;
 import br.com.outtec.timesheetapi.security.dtos.JwtAuthenticationDto;
 import br.com.outtec.timesheetapi.security.dtos.TokenDto;
-import br.com.outtec.timesheetapi.security.services.UserService;
 import br.com.outtec.timesheetapi.security.utils.JwtTokenUtil;
+import br.com.outtec.utils.Response;
 
 @RestController
 @RequestMapping("/auth")
@@ -71,7 +68,7 @@ public class AuthenticationController {
 
 		log.info("Gerando token para o email {}.", authenticationDto.getEmail());
 		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(authenticationDto.getEmail(), authenticationDto.getSenha()));
+				new UsernamePasswordAuthenticationToken(authenticationDto.getEmail(), authenticationDto.getPassword()));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
 		UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationDto.getEmail());
@@ -85,7 +82,7 @@ public class AuthenticationController {
 	public ResponseEntity<Void> refreshToken(@RequestBody JwtAuthenticationDto authenticationDto, HttpServletResponse response) {
 		log.info("NEW TOKEN Gerando token para o email {}.", authenticationDto.getEmail());
 		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(authenticationDto.getEmail(), authenticationDto.getSenha()));
+				new UsernamePasswordAuthenticationToken(authenticationDto.getEmail(), authenticationDto.getPassword()));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		
 		UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationDto.getEmail());

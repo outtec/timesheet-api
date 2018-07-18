@@ -104,7 +104,7 @@ public class TimesheetRespositoryTest {
 		Collaborator collaborator = new Collaborator();
 		collaborator.setName("Josenildo");
 		collaborator.setPassword(PasswordUtils.getBCrypt("Senha123"));
-		collaborator.setPerfil(Perfil.USER);
+		//collaborator.setPerfil(Perfil.USER);
 		return collaborator;
 	}
 

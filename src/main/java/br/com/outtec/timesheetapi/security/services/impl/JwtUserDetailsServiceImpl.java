@@ -1,33 +1,30 @@
 package br.com.outtec.timesheetapi.security.services.impl;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import br.com.outtec.timesheetapi.security.JwtUserFactory;
-import br.com.outtec.timesheetapi.security.domain.User;
-import br.com.outtec.timesheetapi.security.services.UserService;
+import br.com.outtec.timesheetapi.domain.Collaborator;
+import br.com.outtec.timesheetapi.repositories.CollaboratorRepository;
+import br.com.outtec.timesheetapi.security.JwtUser;
 
 @Service
 public class JwtUserDetailsServiceImpl implements UserDetailsService {
 
 	@Autowired
-	private UserService userService;
+	private CollaboratorRepository repo;
 
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Optional<User> User = userService.buscarPorEmail(username);
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+		Collaborator user = repo.findByEmail(email);
 
-		if (User.isPresent()) {
-			return JwtUserFactory.create(User.get());
+		if (user == null) {
+			throw new UsernameNotFoundException(email);
 		}
 
-		throw new UsernameNotFoundException("Email não encontrado.");
+		return new JwtUser(user.getId(), user.getEmail(), user.getPassword(), user.getPerfis());
 	}
-	
-	
+		
 }

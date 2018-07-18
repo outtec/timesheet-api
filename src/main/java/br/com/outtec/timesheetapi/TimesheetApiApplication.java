@@ -1,11 +1,6 @@
 package br.com.outtec.timesheetapi;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
-import javax.xml.stream.events.Comment;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -15,8 +10,7 @@ import org.springframework.context.annotation.Bean;
 
 import br.com.outtec.timesheetapi.domain.Collaborator;
 import br.com.outtec.timesheetapi.repositories.CollaboratorRepository;
-import br.com.outtec.timesheetapi.security.domain.User;
-import br.com.outtec.timesheetapi.security.repositories.UserRepository;
+
 import br.com.outtec.utils.PasswordUtils;
 
 
@@ -29,11 +23,7 @@ public class TimesheetApiApplication {
 	private static final String PASSWORD = "123456!";
 
 	@Autowired
-	private UserRepository usuarioRepository;
-
-
-	@Autowired
-	private CollaboratorRepository colaboratorRepository;
+	//private CollaboratorRepository colaboratorRepository;
 
 	@Bean
 	public CommandLineRunner commandLineRunner() {
@@ -78,17 +68,6 @@ public class TimesheetApiApplication {
 
 			encodedPassword = PasswordUtils.getBCrypt(PASSWORD);
 			System.out.println("Valid Password : " + PasswordUtils.isValidPassword(PASSWORD, encodedPassword));
-
-
-			Locale brasil = new Locale("pt", "BR");
-			DateFormat dateformat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
-			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/YYYY HH:mm");
-
-			Date data2 = simpleDateFormat.parse("12/01/1995 12:20");
-			System.out.println("Dateformat " + dateformat.format(data2));
-			System.out.println("SDateformat " + simpleDateFormat.format(data2));
-			
-		    //System.out.println(“Data e hora brasileira: ”+f2.format(data));
 
 		};
 	}

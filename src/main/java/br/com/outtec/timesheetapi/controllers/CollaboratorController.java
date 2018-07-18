@@ -1,27 +1,32 @@
 package br.com.outtec.timesheetapi.controllers;
 
-import java.text.ParseException;
-import java.util.Optional;
+import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.outtec.timesheetapi.domain.Collaborator;
 import br.com.outtec.timesheetapi.dtos.CollaboratorDto;
-import br.com.outtec.timesheetapi.enums.Perfil;
 import br.com.outtec.timesheetapi.services.CollaboratorService;
-import br.com.outtec.utils.PasswordUtils;
-import br.com.outtec.utils.Response;
+import javassist.tools.rmi.ObjectNotFoundException;
 
 @RestController
 @RequestMapping("api/v1/collaborators")
@@ -33,36 +38,68 @@ public class CollaboratorController {
 	public CollaboratorController() {}
 
 	@Autowired
-	private CollaboratorService collaboratorService;
+	private CollaboratorService service;
 
-
-	@PostMapping("")
-	public ResponseEntity<Response<CollaboratorDto>> save(@Valid @RequestBody CollaboratorDto collaboratorDto, 
-			BindingResult result) throws ParseException{
-		log.info("Adicionando Colaborador {}", collaboratorDto.toString());
-		Response<CollaboratorDto> response = new Response<CollaboratorDto>();
-		Collaborator obj = this.convertDtoToCollaborator(collaboratorDto, result);
-		//TRATAERRO 
-		if(result.hasErrors()) { 
-			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage())); 
-			return ResponseEntity.badRequest().body(response); 
-		} 
-		obj = this.collaboratorService.save(obj);
-		response.setData(this.converteCollaboratorToDto(obj));
-		return ResponseEntity.ok(response);
-	}
-
-	private Collaborator convertDtoToCollaborator(@Valid CollaboratorDto collaboratorDto, BindingResult result) {
-		Collaborator collaborator = new Collaborator();
-		collaborator.setName(collaboratorDto.getName());
-		collaborator.setPassword(PasswordUtils.getBCrypt(collaboratorDto.getPassword()));
-		return collaborator;
+	@RequestMapping(value="/{id}", method=RequestMethod.GET)
+	public ResponseEntity<Collaborator> find(@PathVariable Long id) throws ObjectNotFoundException {
+		Collaborator obj = service.find(id);
+		return ResponseEntity.ok().body(obj);
 	}
 	
-	private CollaboratorDto converteCollaboratorToDto(Collaborator obj) {
-		CollaboratorDto collaboratorDto = new CollaboratorDto();
-		collaboratorDto.setId(Optional.of(obj.getId()));
-		collaboratorDto.setName(obj.getName());
-		return collaboratorDto;
+	@RequestMapping(value="/email", method=RequestMethod.GET)
+	public ResponseEntity<Collaborator> find(@RequestParam(value="value") String email) throws ObjectNotFoundException {
+		Collaborator obj = service.findByEmail(email);
+		return ResponseEntity.ok().body(obj);
 	}
+	
+	@RequestMapping(method=RequestMethod.POST)
+	public ResponseEntity<Void> insert(@Valid @RequestBody CollaboratorDto objDto) {
+		Collaborator obj = service.fromDTO(objDto);
+		obj = service.insert(obj);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+				.path("/{id}").buildAndExpand(obj.getId()).toUri();
+		return ResponseEntity.created(uri).build();
+	}
+	
+	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
+	public ResponseEntity<Void> update(@Valid @RequestBody CollaboratorDto objDto, @PathVariable Long id) throws ObjectNotFoundException {
+		Collaborator obj = service.fromDTO(objDto);
+		obj.setId(id);
+		obj = service.update(obj);
+		return ResponseEntity.noContent().build();
+	}
+	
+	@PreAuthorize("hasAnyRole('ADMIN')")
+	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
+	public ResponseEntity<Void> delete(@PathVariable Long id) throws ObjectNotFoundException {
+		service.delete(id);
+		return ResponseEntity.noContent().build();
+	}
+	
+	@PreAuthorize("hasAnyRole('ADMIN')")
+	@RequestMapping(method=RequestMethod.GET)
+	public ResponseEntity<List<CollaboratorDto>> findAll() {
+		List<Collaborator> list = service.findAll();
+		List<CollaboratorDto> listDto = list.stream().map(obj -> new CollaboratorDto(obj)).collect(Collectors.toList());  
+		return ResponseEntity.ok().body(listDto);
+	}
+	
+	@PreAuthorize("hasAnyRole('ADMIN')")
+	@RequestMapping(value="/page", method=RequestMethod.GET)
+	public ResponseEntity<Page<CollaboratorDto>> findPage(
+			@RequestParam(value="page", defaultValue="0") Integer page, 
+			@RequestParam(value="linesPerPage", defaultValue="24") Integer linesPerPage, 
+			@RequestParam(value="orderBy", defaultValue="nome") String orderBy, 
+			@RequestParam(value="direction", defaultValue="ASC") String direction) {
+		Page<Collaborator> list = service.findPage(page, linesPerPage, orderBy, direction);
+		Page<CollaboratorDto> listDto = list.map(obj -> new CollaboratorDto(obj));  
+		return ResponseEntity.ok().body(listDto);
+	}	
+	
+	@RequestMapping(value="/picture", method=RequestMethod.POST)
+	public ResponseEntity<Void> uploadProfilePicture(@RequestParam(name="file") MultipartFile file) {
+		URI uri = service.uploadProfilePicture(file);
+		return ResponseEntity.created(uri).build();
+	}
+
 }
