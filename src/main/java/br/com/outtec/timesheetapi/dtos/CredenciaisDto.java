@@ -23,7 +23,7 @@ public class CredenciaisDto implements Serializable {
 		this.email = email;
 	}
 
-	@NotEmpty(message = "Senha não pode ser vazia.")
+	@NotEmpty(message = "Password não pode ser vazia.")
 	public String getPassword() {
 		return password;
 	}
