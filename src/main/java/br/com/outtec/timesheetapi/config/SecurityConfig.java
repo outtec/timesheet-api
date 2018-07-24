@@ -48,6 +48,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			"/timesheets/**",
 			"/collaborators/**",
 	};
+	private static final String[] PUBLIC_MATCHERS_DELETE = {
+			"/timesheets/**",
+			"/collaborators/**",
+	};
 
 	private static final String[] PUBLIC_MATCHERS_GET = {
 			"/timesheets/**",
@@ -70,6 +74,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
 		.antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll()
 		.antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_PUT).permitAll()
+		.antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_DELETE).permitAll()
 		.antMatchers(PUBLIC_MATCHERS).permitAll()
 		.anyRequest().authenticated();
 		httpSecurity.addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtUtil));

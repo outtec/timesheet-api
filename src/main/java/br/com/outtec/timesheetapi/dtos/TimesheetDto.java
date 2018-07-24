@@ -13,7 +13,16 @@ public class TimesheetDto {
 	private Boolean isInTravel;
 	private String periodDescription;
 	private Long collaboratorId;
+	private String totalTime;
 	
+
+	public String getTotalTime() {
+		return totalTime;
+	}
+
+	public void setTotalTime(String totalTime) {
+		this.totalTime = totalTime;
+	}
 
 	public TimesheetDto() {}
 

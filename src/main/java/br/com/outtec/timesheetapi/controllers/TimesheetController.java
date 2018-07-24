@@ -195,7 +195,7 @@ public class TimesheetController {
 		timesheet.setIsHoliday(timesheetDto.getIsHoliday());
 		timesheet.setIsInTravel(timesheetDto.getIsInTravel());
 		timesheet.setPeriodDescription(timesheetDto.getPeriodDescription());
-
+		timesheet.setTotalTime(timesheetDto.getTotalTime());
 		return timesheet;
 	}
 
@@ -208,7 +208,7 @@ public class TimesheetController {
 		timesheetDto.setIsInTravel(timesheet.getIsInTravel());
 		timesheetDto.setPeriodDescription(timesheet.getPeriodDescription());
 		timesheetDto.setCollaboratorId(timesheet.getCollaborator().getId());
-
+		timesheetDto.setTotalTime(timesheet.getTotalTime());
 		return timesheetDto;
 	} 
 

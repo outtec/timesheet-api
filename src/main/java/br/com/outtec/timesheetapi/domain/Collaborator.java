@@ -41,9 +41,9 @@ public class Collaborator implements Serializable {
 	@CollectionTable(name="PERFIS")
 	private Set<Integer> perfis = new HashSet<>();
 	
+	@JsonIgnore
 	@OneToMany(targetEntity= Timesheet.class, mappedBy = "collaborator", fetch = FetchType.LAZY, cascade = CascadeType.ALL )
 	private List<Timesheet> timesheets;
-	
 	
 	
 	public Collaborator() {

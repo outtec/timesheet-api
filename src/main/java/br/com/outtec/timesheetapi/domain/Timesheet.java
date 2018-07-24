@@ -20,7 +20,10 @@ public class Timesheet implements Serializable{
 	private String periodDescription;
 	private Date dataAtualizacao;
 	private Date dataCriacao;
+	private String totalTime;
 	
+
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "collaborator_id")
 	private Collaborator collaborator;
@@ -89,7 +92,14 @@ public class Timesheet implements Serializable{
 	public void setDataCriacao(Date dataCriacao) {
 		this.dataCriacao = dataCriacao;
 	}
+	
+	public String getTotalTime() {
+		return totalTime;
+	}
 
+	public void setTotalTime(String totalTime) {
+		this.totalTime = totalTime;
+	}
 
 	@PreUpdate
 	public void preUpdate() {
