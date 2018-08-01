@@ -45,7 +45,7 @@ public class TimesheetDto {
 	public void setIsInTravel(Boolean isInTravel) {
 		this.isInTravel = isInTravel;
 	}
-	@Length(min = 10, max = 500, message ="Descrição do Periodo deve conter entre 10 e 500 caracteres.")
+
 	public String getPeriodDescription() {
 		return periodDescription;
 	}
