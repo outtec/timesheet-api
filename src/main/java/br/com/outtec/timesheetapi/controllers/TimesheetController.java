@@ -42,7 +42,7 @@ public class TimesheetController {
 
 	private static final Logger log = LoggerFactory.getLogger(TimesheetController.class);
 
-	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); //"dd/MM/yyyy HH:mm"
+	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm"); //"dd/MM/yyyy HH:mm"
 
 	@Autowired
 	private TimesheetService timesheetService;
