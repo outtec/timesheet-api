@@ -45,6 +45,10 @@ public class Collaborator implements Serializable {
 	@OneToMany(targetEntity= Timesheet.class, mappedBy = "collaborator", fetch = FetchType.LAZY, cascade = CascadeType.ALL )
 	private List<Timesheet> timesheets;
 	
+	@JsonIgnore
+	@OneToMany(targetEntity= Rule.class, mappedBy = "collaborator", fetch = FetchType.LAZY, cascade = CascadeType.ALL )
+	private List<Rule> regras;
+	
 	
 	public Collaborator() {
 		addPerfil(Perfil.USER);

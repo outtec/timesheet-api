@@ -41,7 +41,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private static final String[] PUBLIC_MATCHERS_POST = {
 			"/timesheets/**",
-			"/collaborators/**"
+			"/collaborators/**",
+			"/auth/refresh_token",
+			"/rules/**"
 	};
 
 	private static final String[] PUBLIC_MATCHERS_PUT = {

@@ -22,8 +22,6 @@ public class Timesheet implements Serializable{
 	private Date dataCriacao;
 	private String totalTime;
 	
-
-
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "collaborator_id")
 	private Collaborator collaborator;
