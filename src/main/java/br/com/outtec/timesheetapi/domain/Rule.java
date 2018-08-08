@@ -1,7 +1,6 @@
 package br.com.outtec.timesheetapi.domain;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,8 +18,8 @@ public class Rule implements Serializable{
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
-	private Date initialHour;
-	private Date finalHour;
+	private String initialHour;
+	private String finalHour;
 	private String rule;
 	private Long value;
 	
@@ -29,7 +28,7 @@ public class Rule implements Serializable{
 	private Collaborator collaborator;
 
 	
-	public Rule(Long id, Date initialHour,Date finalHour, String rule, Long value){
+	public Rule(Long id, String initialHour,String finalHour, String rule, Long value){
 		this.id = id;
 		this.initialHour = initialHour;
 		this.finalHour = finalHour;
@@ -37,19 +36,19 @@ public class Rule implements Serializable{
 		this.value = value;
 	}
 	
-	public Date getInitialHour() {
+	public String getInitialHour() {
 		return initialHour;
 	}
 
-	public void setInitialHour(Date initialHour) {
+	public void setInitialHour(String initialHour) {
 		this.initialHour = initialHour;
 	}
 
-	public Date getFinalHour() {
+	public String getFinalHour() {
 		return finalHour;
 	}
 
-	public void setFinalHour(Date finalHour) {
+	public void setFinalHour(String finalHour) {
 		this.finalHour = finalHour;
 	}
 

@@ -1,8 +1,6 @@
 package br.com.outtec.timesheetapi.services.impl;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -21,7 +19,6 @@ import br.com.outtec.timesheetapi.services.RuleService;
 public class RuleServiceImpl implements RuleService{
 	
 	private static final Logger log = LoggerFactory.getLogger(RuleServiceImpl.class);
-	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm"); //"dd/MM/yyyy HH:mm"
 
 	@Autowired
 	private RuleRepository repo;
@@ -33,20 +30,19 @@ public class RuleServiceImpl implements RuleService{
 	
 	@Override
 	public List<Rule> findByCollaboratorId(Long id) {
+		log.info("Buscando regra por ID do colaborador: {}", id);
 		return this.repo.findByCollaboratorId(id);
 	}
 	
 	public List<Rule> findAll(){
+		log.info("Retornando regras");
 		return this.repo.findAll();
 	}
 
 	@Override
 	public Rule fromDTO(@Valid RuleDto objDto) throws ParseException {
-		Date initialTime = simpleDateFormat.parse(objDto.getInitialHour());
-		Date finalTime = simpleDateFormat.parse(objDto.getFinalHour());
-		
-		
-		return new Rule(objDto.getId(),initialTime,finalTime,objDto.getRule(),objDto.getValue());
+
+		return new Rule(objDto.getId(),objDto.getInitialHour(),objDto.getFinalHour(),objDto.getRule(),objDto.getValue());
 	}
 
 }

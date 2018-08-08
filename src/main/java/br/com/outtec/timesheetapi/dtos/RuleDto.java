@@ -1,7 +1,6 @@
 package br.com.outtec.timesheetapi.dtos;
 
 import java.io.Serializable;
-import java.util.Optional;
 
 public class RuleDto implements Serializable {
 	private static final long serialVersionUID = 1L;
