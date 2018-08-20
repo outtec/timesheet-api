@@ -14,6 +14,7 @@ public class AuthService {
 
 	@Autowired
 	private CollaboratorRepository collaboratorRepository;
+	private EmailService emailService;
 	
 	private String nPass;
 	
@@ -28,7 +29,7 @@ public class AuthService {
 		collaborator.setPassword(PasswordUtils.getBCrypt(newPass));
 		
 		collaboratorRepository.save(collaborator);
-		//emailService.sendNewPasswordEmail(collaborator, newPass);
+		emailService.sendNewPasswordEmail(collaborator, newPass);
 	}
 
 	private String newPassword() {

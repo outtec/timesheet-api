@@ -42,8 +42,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private static final String[] PUBLIC_MATCHERS_POST = {
 			"/timesheets/**",
 			"/collaborators/**",
-			"/auth/refresh_token",
-			"/rules/**"
+			"/auth/forgot**",
+			"/rules/**",
+			"/auth/refresh_token**"
 	};
 
 	private static final String[] PUBLIC_MATCHERS_PUT = {
@@ -57,10 +58,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private static final String[] PUBLIC_MATCHERS_GET = {
 			"/timesheets/**",
-			"/collaborators/**",
-			"/collaborators/email/",
-			"/auth/forgot/**"
-	};
+		};
 
 
 	@Bean(name = BeanIds.AUTHENTICATION_MANAGER)
