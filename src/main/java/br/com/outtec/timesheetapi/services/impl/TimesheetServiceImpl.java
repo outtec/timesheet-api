@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +22,18 @@ import br.com.outtec.timesheetapi.services.TimesheetService;
 public class TimesheetServiceImpl implements TimesheetService{
 
 	private static final Logger log = LoggerFactory.getLogger(TimesheetServiceImpl.class);
-
+	
 	@Autowired
 	private TimesheetRepository timesheetRepository;
-
-	public Timesheet save(Timesheet obj) { 
+	
+	public Timesheet save(Timesheet obj) {
+		System.out.println(obj.getStartDateTime().getTime());
+		DateTime startDateTimeObj = new DateTime(obj.getStartDateTime());
+		DateTime endDateTimeObj = new DateTime(obj.getEndDateTime());
+		Interval interval = new Interval(startDateTimeObj,endDateTimeObj);
+		String strTime = interval.toPeriod().getHours()+":"+interval.toPeriod().getMinutes();
+		strTime = insereZeroAEsquerda(interval.toPeriod().getHours(),interval.toPeriod().getMinutes());
+		obj.setTotalTime(strTime);
 		log.info("Persistindo Timesheet: {}", obj);
 		return this.timesheetRepository.save(obj); 
 	} 
@@ -73,6 +82,17 @@ public class TimesheetServiceImpl implements TimesheetService{
 	
 	public Page<Timesheet> findByCollaboratorIdAndStarDateTime(Long collaboratorId, Date startDateTime, PageRequest pageRequest) {
 		return this.timesheetRepository.findByCollaboratorIdAndStartDateTime(collaboratorId, startDateTime, pageRequest);
+	}
+	
+	private String insereZeroAEsquerda(Integer horas, Integer minutos){
+		String horaFormatada = "";
+		if (horas< 10){
+			horaFormatada = "0"+horas+":";
+		}
+		if (minutos< 10){
+			horaFormatada = horaFormatada +"0"+minutos;
+		}
+		return horaFormatada;
 	}
 
 }

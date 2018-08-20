@@ -2,6 +2,12 @@ package br.com.outtec.timesheetapi;
 
 
 
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.joda.time.Hours;
@@ -12,6 +18,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.xmlunit.util.Convert;
 
 
 @SpringBootApplication
@@ -20,6 +27,9 @@ public class TimesheetApiApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(TimesheetApiApplication.class, args);
 	}
+
+	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm"); //"dd/MM/yyyy HH:mm"
+
 
 	@Bean
 	public CommandLineRunner commandLineRunner() {
@@ -34,13 +44,24 @@ public class TimesheetApiApplication {
 			// duration in ms between two instants
 			Duration dur = new Duration(start, end);
 
-			// calc will be the same as end
-			DateTime calc = start.plus(dur);
-			
 			System.out.println("Total " + dur);
 			System.out.println("INTERVALO ENTRE HORAS " + interval.toPeriod());
-
 			
+			  // A string of time information
+	        String time = "15:30:18";
+	        //Date and Time: Thu Jan 01 15:30:18 BRT 1970
+
+	        DateFormat sdf = new SimpleDateFormat("hh:mm:ss");
+	        try {	            
+	        	Date date = sdf.parse(time);
+	        //	Calendar date = new Calendar(sdf.parse(time));
+			//	DateTime start = new DateTime(0, 0, 0, date.getHours(), date.getMinutes(), 0, 0);
+
+	        	System.out.println("Date and Time: " + date);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            
+	        }
 			/**
 			 * 
 			DateTime start = interval.getStart();
@@ -51,8 +72,5 @@ public class TimesheetApiApplication {
 			
 			 */
 		};          
-
 	}
-
-
 }
