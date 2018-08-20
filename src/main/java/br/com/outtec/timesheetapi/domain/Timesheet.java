@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
 
+import org.joda.time.Hours;
+
 @Entity
 public class Timesheet implements Serializable{
 
@@ -144,5 +146,7 @@ public class Timesheet implements Serializable{
 				+ ", dataAtualizacao=" + dataAtualizacao + ", dataCriacao=" + dataCriacao + ", collaborator="
 				+ collaborator + "]";
 	}
+
+
 
 }

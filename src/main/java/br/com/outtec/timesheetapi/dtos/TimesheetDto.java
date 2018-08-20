@@ -2,6 +2,7 @@ package br.com.outtec.timesheetapi.dtos;
 
 import java.util.Optional;
 import org.hibernate.validator.constraints.Length;
+import org.joda.time.Hours;
 
 
 public class TimesheetDto {
