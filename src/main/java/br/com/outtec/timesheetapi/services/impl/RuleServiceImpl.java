@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.outtec.timesheetapi.domain.Collaborator;
 import br.com.outtec.timesheetapi.domain.Rule;
 import br.com.outtec.timesheetapi.dtos.RuleDto;
 import br.com.outtec.timesheetapi.repositories.RuleRepository;
@@ -41,8 +42,14 @@ public class RuleServiceImpl implements RuleService{
 
 	@Override
 	public Rule fromDTO(@Valid RuleDto objDto) throws ParseException {
-
-		return new Rule(objDto.getId(),objDto.getInitialHour(),objDto.getFinalHour(),objDto.getRule(),objDto.getValue());
+		
+	Rule rule = new Rule();
+	rule.setCollaborator(new Collaborator());
+	rule.getCollaborator().setId(objDto.getCollaboratorId());
+	rule.setId(objDto.getId());
+	rule.setName(objDto.getName());
+	rule.setValue(objDto.getValue());
+	return rule;
 	}
 
 }

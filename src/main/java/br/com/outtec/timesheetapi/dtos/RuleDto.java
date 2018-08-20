@@ -6,10 +6,17 @@ public class RuleDto implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private Long id ;
-	private String initialHour;
-	private String finalHour;
-	private String rule;
-	private Long value;
+	private String name;
+	private String value;
+	private Long collaboratorId;
+	
+	public Long getCollaboratorId() {
+		return collaboratorId;
+	}
+
+	public void setCollaboratorId(Long collaboratorId) {
+		this.collaboratorId = collaboratorId;
+	}
 	
 	public Long getId() {
 		return id;
@@ -17,30 +24,20 @@ public class RuleDto implements Serializable {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public String getInitialHour() {
-		return initialHour;
+
+	public String getName() {
+		return name;
 	}
-	public void setInitialHour(String initialHour) {
-		this.initialHour = initialHour;
+	public void setName(String name) {
+		this.name = name;
 	}
-	public String getFinalHour() {
-		return finalHour;
-	}
-	public void setFinalHour(String finalHour) {
-		this.finalHour = finalHour;
-	}
-	public String getRule() {
-		return rule;
-	}
-	public void setRule(String rule) {
-		this.rule = rule;
-	}
-	public Long getValue() {
+	public String getValue() {
 		return value;
 	}
-	public void setValue(Long value) {
+	public void setValue(String value) {
 		this.value = value;
 	}
+
 	
 	
 }

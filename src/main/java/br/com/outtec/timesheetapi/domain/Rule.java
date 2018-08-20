@@ -17,54 +17,28 @@ public class Rule implements Serializable{
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
-	
-	private String initialHour;
-	private String finalHour;
-	private String rule;
-	private Long value;
+	private String name;
+	private String value;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "collaborator_id")
 	private Collaborator collaborator;
 
-	
-	public Rule(Long id, String initialHour,String finalHour, String rule, Long value){
-		this.id = id;
-		this.initialHour = initialHour;
-		this.finalHour = finalHour;
-		this.rule = rule;
-		this.value = value;
-	}
-	
-	public String getInitialHour() {
-		return initialHour;
+
+
+public String getName() {
+		return name;
 	}
 
-	public void setInitialHour(String initialHour) {
-		this.initialHour = initialHour;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public String getFinalHour() {
-		return finalHour;
-	}
-
-	public void setFinalHour(String finalHour) {
-		this.finalHour = finalHour;
-	}
-
-	public String getRule() {
-		return rule;
-	}
-
-	public void setRule(String rule) {
-		this.rule = rule;
-	}
-
-	public Long getValue() {
+	public String getValue() {
 		return value;
 	}
 
-	public void setValue(Long value) {
+	public void setValue(String value) {
 		this.value = value;
 	}
 
@@ -108,5 +82,6 @@ public class Rule implements Serializable{
 			return false;
 		return true;
 	}
+
 	
 }

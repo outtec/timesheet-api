@@ -2,16 +2,16 @@ package br.com.outtec.timesheetapi;
 
 
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.joda.time.DateTime;
+import org.joda.time.Duration;
+import org.joda.time.Hours;
+import org.joda.time.Interval;
+import org.joda.time.Period;
+import org.joda.time.format.PeriodFormat;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-
-import br.com.outtec.timesheetapi.domain.Collaborator;
-import br.com.outtec.timesheetapi.repositories.CollaboratorRepository;
-
-import br.com.outtec.utils.PasswordUtils;
 
 
 @SpringBootApplication
@@ -20,55 +20,39 @@ public class TimesheetApiApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(TimesheetApiApplication.class, args);
 	}
-	private static final String PASSWORD = "123456!";
-
-	@Autowired
-	//private CollaboratorRepository colaboratorRepository;
 
 	@Bean
 	public CommandLineRunner commandLineRunner() {
 		return args -> {
-/*
- * 	
-	//Criando usuário
-			User usuario = new User();
-			usuario.setEmail("joycesaquino@gmail.com");
-			usuario.setPerfil(PerfilEnum.ROLE_USER);
-			usuario.setSenha(PasswordUtils.getBCrypt(PASSWORD));
-			this.usuarioRepository.save(usuario);
-			System.out.println(usuario.toString());
+			System.out.println("APP NO AR");
 
-			User admin = new User();
-			admin.setEmail("gbvirtual@gmail.com");
-			admin.setPerfil(PerfilEnum.ROLE_ADMIN);
-			admin.setSenha(PasswordUtils.getBCrypt(PASSWORD));
-			this.usuarioRepository.save(admin);
-			System.out.println(admin);
+			// interval from start to end
+			DateTime start = new DateTime(2004, 12, 25, 17, 37, 0, 0);
+			DateTime end = new DateTime(2004, 12, 25, 21, 0, 0, 0);
+			Interval interval = new Interval(start, end);
+			
+			// duration in ms between two instants
+			Duration dur = new Duration(start, end);
 
-			//Criando collaborator
-			Collaborator colaborador = new Collaborator();
-			//colaborador.setId(1L);
-			colaborador.setName("Josenildo");
-			colaborador.setPassword("123456!");
-			colaborador.setPerfil(PerfilEnum.ROLE_USER);
-			this.colaboratorRepository.save(colaborador);
-			System.out.println("Colaborador cadastrado - Nome :" + colaborador.getName());
+			// calc will be the same as end
+			DateTime calc = start.plus(dur);
+			
+			System.out.println("Total " + dur);
+			System.out.println("INTERVALO ENTRE HORAS " + interval.toPeriod());
 
-			//Criando uma entrada de timesheet
- 
+			
+			/**
+			 * 
+			DateTime start = interval.getStart();
+			DateTime end = interval.getEnd();
+			Chronology chrono = interval.getChronology();
+			Duration duration = interval.toDuration();
+			Period period = interval.toPeriod();
+			
+			 */
+		};          
 
-	
-* */
-			//Testando Password com Bcrypt
-			String encodedPassword = PasswordUtils.getBCrypt(PASSWORD);
-			System.out.println("Password encoded : " + encodedPassword);
-
-			encodedPassword = PasswordUtils.getBCrypt(PASSWORD);
-			System.out.println("Password encoded hash again : " + encodedPassword);
-
-			encodedPassword = PasswordUtils.getBCrypt(PASSWORD);
-			System.out.println("Valid Password : " + PasswordUtils.isValidPassword(PASSWORD, encodedPassword));
-
-		};
 	}
+
+
 }
