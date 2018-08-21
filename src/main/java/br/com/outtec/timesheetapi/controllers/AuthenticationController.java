@@ -37,7 +37,7 @@ public class AuthenticationController {
 	}
 	
 	@RequestMapping(value = "/forgot", method = RequestMethod.POST)
-	public ResponseEntity<Void> forgot(@Valid @RequestBody EmailDto objDto) throws ObjectNotFoundException {
+	public ResponseEntity<Void> forgot(@Valid @RequestBody EmailDto objDto) {
 		service.sendNewPassword(objDto.getEmail());
 		return ResponseEntity.noContent().build();
 	}

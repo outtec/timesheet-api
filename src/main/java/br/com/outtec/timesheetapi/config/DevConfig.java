@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Profile;
 
 import br.com.outtec.timesheetapi.services.EmailService;
 import br.com.outtec.timesheetapi.services.MockEmailService;
+import br.com.outtec.timesheetapi.services.SmtpEmailService;
 
 @Configuration
 @Profile("dev")
@@ -17,8 +18,8 @@ public class DevConfig {
     
     @Bean
     public EmailService emailService() {
-//	return new SmtpEmailService();
-	return new MockEmailService();	
+	return new SmtpEmailService();
+//	return new MockEmailService();	
     }
     
 }

@@ -8,7 +8,7 @@ import br.com.outtec.timesheetapi.services.EmailService;
 import br.com.outtec.timesheetapi.services.MockEmailService;
 
 @Configuration
-@Profile("dev")
+@Profile("test")
 public class TestConfig {
 
 //    @Autowired
