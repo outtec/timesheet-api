@@ -15,7 +15,6 @@ import br.com.outtec.timesheetapi.security.JWTUtil;
 import br.com.outtec.timesheetapi.security.JwtUser;
 import br.com.outtec.timesheetapi.security.JwtUserFactory;
 import br.com.outtec.timesheetapi.services.AuthService;
-import javassist.tools.rmi.ObjectNotFoundException;
 
 @RestController
 @RequestMapping(value = "/auth")
