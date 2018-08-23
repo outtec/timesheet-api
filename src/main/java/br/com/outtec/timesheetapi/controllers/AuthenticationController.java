@@ -15,7 +15,6 @@ import br.com.outtec.timesheetapi.security.JWTUtil;
 import br.com.outtec.timesheetapi.security.JwtUser;
 import br.com.outtec.timesheetapi.security.JwtUserFactory;
 import br.com.outtec.timesheetapi.services.AuthService;
-import javassist.tools.rmi.ObjectNotFoundException;
 
 @RestController
 @RequestMapping(value = "/auth")
@@ -37,7 +36,7 @@ public class AuthenticationController {
 	}
 	
 	@RequestMapping(value = "/forgot", method = RequestMethod.POST)
-	public ResponseEntity<Void> forgot(@Valid @RequestBody EmailDto objDto) throws ObjectNotFoundException {
+	public ResponseEntity<Void> forgot(@Valid @RequestBody EmailDto objDto) {
 		service.sendNewPassword(objDto.getEmail());
 		return ResponseEntity.noContent().build();
 	}

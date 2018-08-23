@@ -4,8 +4,6 @@ package br.com.outtec.timesheetapi.respositories;
 import static org.junit.Assert.assertEquals;
 
 import java.security.NoSuchAlgorithmException;
-
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -14,11 +12,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import br.com.outtec.timesheetapi.domain.Collaborator;
 import br.com.outtec.timesheetapi.domain.Timesheet;
-import br.com.outtec.timesheetapi.enums.Perfil;
 import br.com.outtec.timesheetapi.repositories.CollaboratorRepository;
 import br.com.outtec.timesheetapi.repositories.TimesheetRepository;
 import br.com.outtec.utils.PasswordUtils;
@@ -26,7 +24,7 @@ import br.com.outtec.utils.PasswordUtils;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-//@ActiveProfiles("test")
+@ActiveProfiles("test")
 public class TimesheetRespositoryTest {
 	
 	@Autowired
@@ -38,13 +36,15 @@ public class TimesheetRespositoryTest {
 	Timesheet timesheet = new Timesheet();
 	Collaborator collaborator =  new Collaborator();
 
+
 	@Before
 	public void setUp()throws Exception{
-		collaborator =  this.collaboratorRepository.save(getCollaboratorData());
+		//collaborator =  this.collaboratorRepository.save(getCollaboratorData());
 
 		timesheet = this.timehseetRepository.save(getTimesheetData(collaborator));
-		this.timehseetRepository.save(getTimesheetData1(collaborator));
+		//this.timehseetRepository.save(getTimesheetData1(collaborator));
 	}
+	
 		
 	@Test
 	public void testfindByCollaboratorId() {
@@ -103,8 +103,8 @@ public class TimesheetRespositoryTest {
 	private Collaborator getCollaboratorData()throws NoSuchAlgorithmException{
 		Collaborator collaborator = new Collaborator();
 		collaborator.setName("Josenildo");
+		collaborator.setEmail("josenildo@gmail.com");
 		collaborator.setPassword(PasswordUtils.getBCrypt("Senha123"));
-		//collaborator.setPerfil(Perfil.USER);
 		return collaborator;
 	}
 

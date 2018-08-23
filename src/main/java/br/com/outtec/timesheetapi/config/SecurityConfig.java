@@ -40,27 +40,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	};
 
 	private static final String[] PUBLIC_MATCHERS_POST = {
-			"/timesheets/**",
 			"/collaborators/**",
-			"/auth/refresh_token",
-			"/rules/**"
+			"/auth/forgot**",
+			"/auth/refresh_token**"
 	};
 
 	private static final String[] PUBLIC_MATCHERS_PUT = {
-			"/timesheets/**",
-			"/collaborators/**",
-	};
-	private static final String[] PUBLIC_MATCHERS_DELETE = {
-			"/timesheets/**",
 			"/collaborators/**",
 	};
 
-	private static final String[] PUBLIC_MATCHERS_GET = {
-			"/timesheets/**",
-			"/collaborators/**",
-			"/collaborators/email/",
-			"/auth/forgot/**"
+	private static final String[] PUBLIC_MATCHERS_DELETE = {
 	};
+
+	private static final String[] PUBLIC_MATCHERS_GET = {
+		};
 
 
 	@Bean(name = BeanIds.AUTHENTICATION_MANAGER)

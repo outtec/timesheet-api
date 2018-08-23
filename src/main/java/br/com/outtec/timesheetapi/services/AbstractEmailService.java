@@ -4,9 +4,9 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.stereotype.Service;
 
-import br.com.outtec.timesheetapi.domain.Collaborator;
-
+@Service
 public abstract class AbstractEmailService implements EmailService {
 	
 	@Value("${default.sender}")
@@ -14,14 +14,15 @@ public abstract class AbstractEmailService implements EmailService {
 	
 	
 	@Override
-	public void sendNewPasswordEmail(Collaborator collaborator, String newPass) {
-		SimpleMailMessage sm = prepareNewPasswordEmail(collaborator, newPass);
+	public void sendNewPasswordEmail(String email, String newPass) {
+		SimpleMailMessage sm = prepareNewPasswordEmail(email, newPass);
 		sendEmail(sm);
 	}
 	
-	protected SimpleMailMessage prepareNewPasswordEmail(Collaborator collaborator, String newPass) {
+	protected SimpleMailMessage prepareNewPasswordEmail(String email, String newPass) {
 		SimpleMailMessage sm = new SimpleMailMessage();
-		sm.setTo(collaborator.getEmail());
+		
+		sm.setTo(email);
 		sm.setFrom(sender);
 		sm.setSubject("Solicitação de nova senha");
 		sm.setSentDate(new Date(System.currentTimeMillis()));

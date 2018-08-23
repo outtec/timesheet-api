@@ -16,7 +16,6 @@ public class TimesheetApiApplication {
 	@Bean
 	public CommandLineRunner commandLineRunner() {
 		return args -> {
-
 		};          
 	}
 }
