@@ -72,8 +72,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		httpSecurity.authorizeRequests()
 		.antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
 		.antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll()
-		.antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_PUT).permitAll()
-		.antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_DELETE).permitAll()
+		.antMatchers(HttpMethod.PUT, PUBLIC_MATCHERS_PUT).permitAll()
+		.antMatchers(HttpMethod.DELETE, PUBLIC_MATCHERS_DELETE).permitAll()
 		.antMatchers(PUBLIC_MATCHERS).permitAll()
 		.anyRequest().authenticated();
 		httpSecurity.addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtUtil));
