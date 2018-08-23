@@ -36,7 +36,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private JWTUtil jwtUtil;
 
 	private static final String[] PUBLIC_MATCHERS = {
-			
+			"/auth/forgot**",
+			"/auth/refresh_token**"
 	};
 
 	private static final String[] PUBLIC_MATCHERS_POST = {
