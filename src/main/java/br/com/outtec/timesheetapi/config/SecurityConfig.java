@@ -35,26 +35,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private JWTUtil jwtUtil;
 
-	private static final String[] PUBLIC_MATCHERS = {
-
-	};
 
 	private static final String[] PUBLIC_MATCHERS_POST = {
 			"/collaborators/**",
 			"/auth/forgot**",
 			"/auth/refresh_token**"
 	};
-
-	private static final String[] PUBLIC_MATCHERS_PUT = {
-			"/collaborators/**",
-	};
-
-	private static final String[] PUBLIC_MATCHERS_DELETE = {
-	};
-
-	private static final String[] PUBLIC_MATCHERS_GET = {
-		};
-
 
 	@Bean(name = BeanIds.AUTHENTICATION_MANAGER)
 	@Override
@@ -67,10 +53,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		httpSecurity.cors().and().csrf().disable();
 		httpSecurity.authorizeRequests()
 		.antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
-		.antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll()
-		.antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_PUT).permitAll()
-		.antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_DELETE).permitAll()
-		.antMatchers(PUBLIC_MATCHERS).permitAll()
 		.anyRequest().authenticated();
 		httpSecurity.addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtUtil));
 		httpSecurity.addFilter(new JwtAuthorizationFilter(authenticationManager(), jwtUtil, userDetailsService));
