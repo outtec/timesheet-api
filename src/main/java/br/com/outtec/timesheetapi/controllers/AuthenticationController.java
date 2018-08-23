@@ -37,7 +37,6 @@ public class AuthenticationController {
 	
 	@RequestMapping(value = "/forgot", method = RequestMethod.POST)
 	public ResponseEntity<Void> forgot(@Valid @RequestBody EmailDto objDto, HttpServletResponse response) {
-		response.addHeader("access-control-expose-headers", "Authorization");
 		service.sendNewPassword(objDto.getEmail());
 		return ResponseEntity.noContent().build();
 	}
