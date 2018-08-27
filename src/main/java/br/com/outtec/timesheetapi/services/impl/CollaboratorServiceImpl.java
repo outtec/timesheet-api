@@ -22,7 +22,6 @@ import br.com.outtec.timesheetapi.repositories.CollaboratorRepository;
 import br.com.outtec.timesheetapi.security.JwtUser;
 import br.com.outtec.timesheetapi.security.JwtUserFactory;
 import br.com.outtec.timesheetapi.services.CollaboratorService;
-import br.com.outtec.timesheetapi.services.ImageService;
 import br.com.outtec.timesheetapi.services.exceptions.AuthorizationException;
 import br.com.outtec.timesheetapi.services.exceptions.DataIntegrityException;
 import br.com.outtec.utils.PasswordUtils;
@@ -36,15 +35,6 @@ public class CollaboratorServiceImpl  implements CollaboratorService{
 	
 	@Autowired
 	private CollaboratorRepository repo;
-	
-	@Autowired
-	private ImageService imageService;
-		
-	@Value("${img.prefix.collaborator.profile}")
-	private String prefix;
-	
-	@Value("${img.profile.size}")
-	private Integer size;
 	
 public Collaborator find(Long id) throws ObjectNotFoundException {
 		
