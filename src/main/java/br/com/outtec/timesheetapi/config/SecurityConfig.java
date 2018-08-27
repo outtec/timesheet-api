@@ -36,25 +36,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private JWTUtil jwtUtil;
 
 	private static final String[] PUBLIC_MATCHERS_POST = {
-			"/timesheets/**",
 			"/collaborators/**",
 			"/auth/forgot**",
-			"/rules/**"
-	};
-
-	private static final String[] PUBLIC_MATCHERS_PUT = {
-			"/timesheets/**",
-			"/collaborators/**",
-	};
-	private static final String[] PUBLIC_MATCHERS_DELETE = {
-			"/timesheets/**",
-			"/collaborators/**"
+			"/auth/refresh_token**"
 	};
 
 	private static final String[] PUBLIC_MATCHERS_GET = {
 			"/timesheets/**"
 		};
-
 
 	@Bean(name = BeanIds.AUTHENTICATION_MANAGER)
 	@Override
@@ -68,8 +57,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		httpSecurity.authorizeRequests()
 		.antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
 		.antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll()
-		.antMatchers(HttpMethod.PUT, PUBLIC_MATCHERS_PUT).permitAll()
-		.antMatchers(HttpMethod.DELETE, PUBLIC_MATCHERS_DELETE).permitAll()
 		.anyRequest().authenticated();
 		httpSecurity.addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtUtil));
 		httpSecurity.addFilter(new JwtAuthorizationFilter(authenticationManager(), jwtUtil, userDetailsService));
