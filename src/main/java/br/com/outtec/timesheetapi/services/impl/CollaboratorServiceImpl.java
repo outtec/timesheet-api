@@ -1,7 +1,5 @@
 package br.com.outtec.timesheetapi.services.impl;
 
-import java.awt.image.BufferedImage;
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,7 +14,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import br.com.outtec.timesheetapi.domain.Collaborator;
 import br.com.outtec.timesheetapi.dtos.CollaboratorDto;
@@ -26,7 +23,6 @@ import br.com.outtec.timesheetapi.security.JwtUser;
 import br.com.outtec.timesheetapi.security.JwtUserFactory;
 import br.com.outtec.timesheetapi.services.CollaboratorService;
 import br.com.outtec.timesheetapi.services.ImageService;
-import br.com.outtec.timesheetapi.services.S3Service;
 import br.com.outtec.timesheetapi.services.exceptions.AuthorizationException;
 import br.com.outtec.timesheetapi.services.exceptions.DataIntegrityException;
 import br.com.outtec.utils.PasswordUtils;
@@ -40,9 +36,6 @@ public class CollaboratorServiceImpl  implements CollaboratorService{
 	
 	@Autowired
 	private CollaboratorRepository repo;
-	
-	@Autowired
-	private S3Service s3Service;
 	
 	@Autowired
 	private ImageService imageService;
@@ -116,28 +109,12 @@ public Collaborator find(Long id) throws ObjectNotFoundException {
 		return new Collaborator(objDto.getId(), objDto.getName(), objDto.getEmail(), PasswordUtils.getBCrypt((objDto.getPassword())));
 	}
 
-	
-	
+
 	private void updateData(Collaborator newObj, Collaborator obj) {
 		newObj.setName(obj.getName());
 		newObj.setEmail(obj.getEmail());
 	}
 	
-
-	public URI uploadProfilePicture(MultipartFile multipartFile) {
-		JwtUser user = JwtUserFactory.authenticated();
-		if (user == null) {
-			throw new AuthorizationException("Acesso negado");
-		}
-		
-		BufferedImage jpgImage = imageService.getJpgImageFromFile(multipartFile);
-		jpgImage = imageService.cropSquare(jpgImage);
-		jpgImage = imageService.resize(jpgImage, size);
-		
-		String fileName = prefix + user.getId() + ".jpg";
-		
-		return s3Service.uploadFile(imageService.getInputStream(jpgImage, "jpg"), fileName, "image");
-	}
 
 	
 }
