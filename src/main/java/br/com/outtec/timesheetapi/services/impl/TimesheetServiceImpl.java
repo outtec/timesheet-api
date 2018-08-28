@@ -22,45 +22,49 @@ import br.com.outtec.timesheetapi.services.TimesheetService;
 public class TimesheetServiceImpl implements TimesheetService{
 
 	private static final Logger log = LoggerFactory.getLogger(TimesheetServiceImpl.class);
-	
+
 	@Autowired
-	private TimesheetRepository timesheetRepository;
-	
+	private TimesheetRepository repo;
+
 	public Timesheet save(Timesheet obj) {
-		System.out.println(obj.getStartDateTime().getTime());
+
 		DateTime startDateTimeObj = new DateTime(obj.getStartDateTime());
 		DateTime endDateTimeObj = new DateTime(obj.getEndDateTime());
+
+		//calcula o total de horas do lancamento.
 		Interval interval = new Interval(startDateTimeObj,endDateTimeObj);
+
+		//Formata o lancamento para padrão de hora
 		String strTime = interval.toPeriod().getHours()+":"+interval.toPeriod().getMinutes();
 		strTime = insereZeroAEsquerda(interval.toPeriod().getHours(),interval.toPeriod().getMinutes());
+
 		obj.setTotalTime(strTime);
 		log.info("Persistindo Timesheet: {}", obj);
-		return this.timesheetRepository.save(obj); 
+		return this.repo.save(obj); 
 	} 
 
 	public Optional<Timesheet> findByID(Long id){
 		log.info("Buscando Timesheet por ID: {}", id);
-		return this.timesheetRepository.findById(id);
+		return this.repo.findById(id);
 	}
 
 	public List<Timesheet> returnTimesheets() {
-		List<Timesheet> List = timesheetRepository.findAll();
+		List<Timesheet> List = repo.findAll();
 		return List;
 
 	}
 
 	public void delete(Long id) {
-		this.timesheetRepository.deleteById(id);
+		this.repo.deleteById(id);
 	}
 
 	public  Page<Timesheet> findByCollaboratorId(Long id, PageRequest pageRequest){
-		return this.timesheetRepository.findByCollaboratorId(id, pageRequest);
+		return this.repo.findByCollaboratorId(id, pageRequest);
 	};
-
 
 	public boolean checkExistingTimesheet(Timesheet obj) {
 		Boolean existeTimesheet = false;
-		List<Timesheet> list = this.timesheetRepository.findByStartDateTimeAndEndDateTimeAndCollaborator(obj.getStartDateTime(),obj.getEndDateTime(),obj.getCollaborator());
+		List<Timesheet> list = this.repo.findByStartDateTimeAndEndDateTimeAndCollaborator(obj.getStartDateTime(),obj.getEndDateTime(),obj.getCollaborator());
 		if (list.isEmpty()){
 			return false;
 		}
@@ -73,26 +77,30 @@ public class TimesheetServiceImpl implements TimesheetService{
 
 	@Override
 	public List<Timesheet> findByCollaboratorId(Long id) {
-		return this.timesheetRepository.findByCollaboratorId(id);
+		return this.repo.findByCollaboratorId(id);
 	}
 
 	public Page<Timesheet> getByPeriod(Date startDate, Date endDate, PageRequest pageRequest) {
-		return this.timesheetRepository.findByCollaboratorBetween(startDate, endDate,pageRequest);
+		return this.repo.findByCollaboratorBetween(startDate, endDate,pageRequest);
 	}
-	
+
 	public Page<Timesheet> findByCollaboratorIdAndStarDateTime(Long collaboratorId, Date startDateTime, PageRequest pageRequest) {
-		return this.timesheetRepository.findByCollaboratorIdAndStartDateTime(collaboratorId, startDateTime, pageRequest);
+		return this.repo.findByCollaboratorIdAndStartDateTime(collaboratorId, startDateTime, pageRequest);
 	}
 	
-	private String insereZeroAEsquerda(Integer horas, Integer minutos){
+	@Override
+	public String insereZeroAEsquerda(Integer horas, Integer minutos){
 		String horaFormatada = "";
 		if (horas< 10){
 			horaFormatada = "0"+horas+":";
 		}
 		if (minutos< 10){
 			horaFormatada = horaFormatada +"0"+minutos;
+		}else {
+			horaFormatada = horaFormatada + minutos;
 		}
 		return horaFormatada;
 	}
+
 
 }
