@@ -68,4 +68,10 @@ public interface TimesheetService {
 
 	String insereZeroAEsquerda(Integer horas, Integer minutos);
 	
+	/**
+	 * 
+	 * @param collaborator_id
+	 */
+	public void calculaHoraForaDeHorarioComercial(Long collaborator_id);
+	
 }
