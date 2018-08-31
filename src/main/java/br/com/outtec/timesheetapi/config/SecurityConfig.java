@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
@@ -34,6 +35,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private JWTUtil jwtUtil;
+	
+	@Autowired
+	private Environment env;	
+	
+	private static final String[] PUBLIC_MATCHERS = { "/h2-console/**" };
 
 	private static final String[] PUBLIC_MATCHERS_POST = {
 			"/collaborators/**",
@@ -52,28 +58,45 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
+	    
+		// H2-console Bypass
+		if (Arrays.asList(env.getActiveProfiles()).contains("test")) {
+		    httpSecurity.headers().frameOptions().disable();
+		}
+		
 		httpSecurity.cors().and().csrf().disable();
+		
 		httpSecurity.authorizeRequests()
-		.antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
-		.antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll()
-		.anyRequest().authenticated();
+        		.antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
+        		.antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll()
+        		.antMatchers(PUBLIC_MATCHERS).permitAll()
+        		.anyRequest().authenticated();
 		httpSecurity.addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtUtil));
 		httpSecurity.addFilter(new JwtAuthorizationFilter(authenticationManager(), jwtUtil, userDetailsService));
 		httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
 
-	@Bean
-	public CorsConfigurationSource corsConfigurationSource() {
-		final CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(Arrays.asList("*"));
-		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE","OPTIONS"));
-		configuration.setAllowCredentials(true);
-		configuration.setAllowedHeaders(Arrays.asList("*"));
-		configuration.setExposedHeaders(Arrays.asList("X-Auth-Token","Authorization","Access-Control-Allow-Origin","Access-Control-Allow-Credentials"));
+//	@Bean
+//	public CorsConfigurationSource corsConfigurationSource() {
+//		final CorsConfiguration configuration = new CorsConfiguration();
+//		configuration.setAllowedOrigins(Arrays.asList("*"));
+//		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE","OPTIONS"));
+//		configuration.setAllowCredentials(true);
+//		configuration.setAllowedHeaders(Arrays.asList("*"));
+//		configuration.setExposedHeaders(Arrays.asList("X-Auth-Token","Authorization","Access-Control-Allow-Origin","Access-Control-Allow-Credentials"));
+//		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//		source.registerCorsConfiguration("/**", configuration);
+//		return source;
+//	}
+	    @Bean
+	    CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration().applyPermitDefaultValues();
 		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 		source.registerCorsConfiguration("/**", configuration);
 		return source;
-	}
+	    }
+	
 
 	@Autowired
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
