@@ -37,8 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private static final String[] PUBLIC_MATCHERS_POST = {
 			"/collaborators/**",
-			"/auth/forgot**",
-			"/auth/refresh_token**"
+			"/auth/forgot**"
 	};
 
 	private static final String[] PUBLIC_MATCHERS_GET = {
