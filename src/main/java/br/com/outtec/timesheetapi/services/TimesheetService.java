@@ -38,14 +38,14 @@ public interface TimesheetService {
 	void delete(Long id);
 	
 	/**
-	 * Retorna Timehseets por Colaborador Paginado
+	 * Return Timehseets by Collaborator Paginado
 	 * @param id
 	 * @return
 	 */
 	Page<Timesheet> findByCollaboratorId(Long id, PageRequest pageRequest);
 	
 	/**
-	 * Retorna Timehseets por Colaborador
+	 * Return Timehseets by Collaborator
 	 * @param id
 	 * @return
 	 */
@@ -65,5 +65,13 @@ public interface TimesheetService {
 	 * @return A list of timessheets by Day
 	 */
 	Page<Timesheet> findByCollaboratorIdAndStarDateTime(Long id, Date startDateTime,PageRequest pageRequest);
+
+	String insereZeroAEsquerda(Integer horas, Integer minutos);
+	
+	/**
+	 * 
+	 * @param collaborator_id
+	 */
+	public void calculaHoraForaDeHorarioComercial(Long collaborator_id);
 	
 }
