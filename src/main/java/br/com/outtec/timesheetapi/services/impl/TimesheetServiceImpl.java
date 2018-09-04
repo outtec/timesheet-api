@@ -22,20 +22,75 @@ import br.com.outtec.timesheetapi.services.TimesheetService;
 @Service
 public class TimesheetServiceImpl implements TimesheetService{
 
-	DateTime startDate;
-	DateTime endDate;
-	DateTime timeInit; // = new DateTime(2018,8,27,21,0);
-	DateTime timeEnd; // = new DateTime(2000,8,27,23,59);
-	Interval intervalAfter21;
-	Period objPeriodAfter21;
-	Period totalAfter21 = new Period(0);
-	String timeAfter21;
+
+
+	//Novas Variaveis
+	DateTime iniForaDeHora; 
+	DateTime fimForaDeHora;
+	
+	Interval intevalForaDeHoraComercial;
+	Interval intevalDentroDeHoraComercial;
+	
+	Period periodForaDeHoraComercial;
+	Period periodDentroDeHoraComercial;
+	
+	Period totalForaDeHoraComercial = new Period(0);
+	Period totalDentroDeHoraComercial = new Period(0);
+	
+	String horasNormais;
+	String horasAposHorario;
+	
+
 	
 	private static final Logger log = LoggerFactory.getLogger(TimesheetServiceImpl.class);
 
 	@Autowired
 	private TimesheetRepository repo;
+	
+	public void calculaHoraForaDeHorarioComercial(Long collaborator_id){
+		List<Timesheet> lancamentos = this.repo.findByCollaboratorId(collaborator_id);
+		lancamentos.stream().forEach(lancamento ->{ 
+		
+			DateTime startDate = new DateTime(lancamento.getStartDateTime());
+			DateTime endDate = new DateTime(lancamento.getEndDateTime()); 
+			
+			Integer ano = startDate.getYear();
+			Integer mes =  startDate.getMonthOfYear();
+			Integer dia = startDate.getDayOfMonth();
+			
+			
+			//inicia o período para calculo dentro do horário de 21:00 até às 23:59
+			iniForaDeHora = new DateTime(ano,mes,dia,21,0);
+			fimForaDeHora = new DateTime(ano,mes,dia,23,59);
+			
+			//Se o horário a hora de Inicio do lancamento for após as 21 então considera todo o lancamento como fora do horário
+			if(startDate.isAfter(iniForaDeHora) && (endDate.isBefore(fimForaDeHora))){
+				periodForaDeHoraComercial = new Period(intevalForaDeHoraComercial = new Interval(startDate,endDate));
+				totalForaDeHoraComercial = totalForaDeHoraComercial.plusHours(periodForaDeHoraComercial.getHours()).plusMinutes(periodForaDeHoraComercial.getMinutes());
+				horasAposHorario = insereZeroAEsquerda(totalForaDeHoraComercial.getHours(),totalForaDeHoraComercial.getMinutes());
+			}
+			
+			//Se o horario de inicio do lançamento for anterior as 21h mas o horário de saída passa das 21h então calcula hora normal e hora não util.
+			if(startDate.isBefore(iniForaDeHora) && (endDate.isAfter(iniForaDeHora))){
 
+				//Pega do tempo inicial até o inicio do período fora do horario Ex.:21h essas são as horas normais
+				periodDentroDeHoraComercial = new Period(intevalDentroDeHoraComercial = new Interval(startDate,iniForaDeHora));
+				totalDentroDeHoraComercial = totalDentroDeHoraComercial.plusHours(periodDentroDeHoraComercial.getHours()).plusMinutes(periodDentroDeHoraComercial.getMinutes());
+				horasNormais = insereZeroAEsquerda(periodDentroDeHoraComercial.getHours(),periodDentroDeHoraComercial.getMinutes());
+ 
+				//Pega do inicio do periodo fora do horário comercial até o tempo final
+				periodForaDeHoraComercial = new Period(intevalForaDeHoraComercial = new Interval(iniForaDeHora,endDate));
+				totalForaDeHoraComercial = totalForaDeHoraComercial.plusHours(periodForaDeHoraComercial.getHours()).plusMinutes(periodForaDeHoraComercial.getMinutes());
+				horasAposHorario = insereZeroAEsquerda(totalForaDeHoraComercial.getHours(),totalForaDeHoraComercial.getMinutes());
+				
+			}
+ 
+		});
+		System.out.println(horasNormais); 
+		System.out.println(horasAposHorario);	
+
+	}
+	
 	public Timesheet save(Timesheet obj) {
 
 		DateTime startDateTimeObj = new DateTime(obj.getStartDateTime());
@@ -97,45 +152,9 @@ public class TimesheetServiceImpl implements TimesheetService{
 	public Page<Timesheet> findByCollaboratorIdAndStarDateTime(Long collaboratorId, Date startDateTime, PageRequest pageRequest) {
 		return this.repo.findByCollaboratorIdAndStartDateTime(collaboratorId, startDateTime, pageRequest);
 	}
-	
-	public void calculaHoraForaDeHorarioComercial(Long collaborator_id){
 
-		
-		List<Timesheet> lancamentos = this.repo.findByCollaboratorId(collaborator_id);
-		lancamentos.stream().forEach(lancamento ->{ 
-			startDate = new DateTime(lancamento.getStartDateTime());
-			Integer ano = startDate.getYear();
-			Integer mes =  startDate.getMonthOfYear();
-			Integer dia = startDate.getDayOfMonth();
-			
-			endDate = new DateTime(lancamento.getEndDateTime());
-			timeInit = new DateTime(ano,mes,dia,21,0);
-			timeEnd = new DateTime(ano,mes,dia,23,59);
-			if(startDate.isAfter(timeInit)){
-				intervalAfter21 = new Interval(startDate,endDate);
-				objPeriodAfter21 = new Period(intervalAfter21);
-				totalAfter21 = totalAfter21.plusHours(objPeriodAfter21.getHours()).plusMinutes(objPeriodAfter21.getMinutes());
-				//totalAfter21 = totalAfter21.plusMinutes(objPeriodAfter21.getMinutes());		
-				String timeAfter21 = insereZeroAEsquerda(objPeriodAfter21.getHours(),objPeriodAfter21.getMinutes());
-			}
 
-			if(startDate.isBefore(timeInit) && (endDate.isAfter(timeInit))){
-				//Pega do tempo inicial até as 21h
-				intervalAfter21 = new Interval(startDate,timeInit);
-				objPeriodAfter21 = new Period(intervalAfter21);
-				timeAfter21 = insereZeroAEsquerda(objPeriodAfter21.getHours(),objPeriodAfter21.getMinutes());
 
-				//Pega de 21h até o tempo final
-				Interval intervalABefore21 = new Interval(timeInit,endDate);
-				Period objPeriodBefore21 = new Period(intervalABefore21);
-				String timeBefore21 = insereZeroAEsquerda(objPeriodBefore21.getHours(),objPeriodBefore21.getMinutes());
-				totalAfter21 = totalAfter21.plusHours(objPeriodBefore21.getHours()).plusMinutes(objPeriodBefore21.getMinutes());
-				//totalAfter21 = totalAfter21.plusMinutes(objPeriodBefore21.getMinutes());
-		}
-		});
-		System.out.println("TOTAL "+totalAfter21);
-	}
-	
 	@Override
 	public String insereZeroAEsquerda(Integer horas, Integer minutos){
 		String horaFormatada = "";

@@ -93,10 +93,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		CorsConfiguration configuration = new CorsConfiguration().applyPermitDefaultValues();
 		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+		configuration.setExposedHeaders(Arrays.asList("X-Auth-Token","Authorization","Access-Control-Allow-Origin","Access-Control-Allow-Credentials"));
 		source.registerCorsConfiguration("/**", configuration);
 		return source;
 	    }
-	
+
 
 	@Autowired
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {

@@ -73,5 +73,6 @@ public interface TimesheetService {
 	 * @param collaborator_id
 	 */
 	public void calculaHoraForaDeHorarioComercial(Long collaborator_id);
+
 	
 }
