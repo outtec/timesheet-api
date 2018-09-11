@@ -1,12 +1,13 @@
 package br.com.outtec.timesheetapi.services.impl;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.joda.time.Interval;
-import org.joda.time.Period;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,109 +23,77 @@ import br.com.outtec.timesheetapi.services.TimesheetService;
 @Service
 public class TimesheetServiceImpl implements TimesheetService{
 
-	DateTime iniForaDeHora; 
-	DateTime fimForaDeHora;
-
-	Period periodForaDeHoraComercial;
-	Period periodDentroDeHoraComercial;
-
-	Period totalForaDeHoraComercial = new Period(0);
-	Period totalDentroDeHoraComercial = new Period(0);
-
-	String horasNormais;
-	String horasAposHorario;
 
 	private static final Logger log = LoggerFactory.getLogger(TimesheetServiceImpl.class);
 
 	@Autowired
 	private TimesheetRepository repo;
 
-	public void calculaHoraForaDeHorarioComercial(Long collaborator_id){
+
+	public void getTimesheetsPorPeriodo(Long collaborator_id, DateTime start,DateTime end){
 		List<Timesheet> lancamentos = this.repo.findByCollaboratorId(collaborator_id);
 		lancamentos.stream().forEach(lancamento ->{ 
+			int i = 0;
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(lancamento.getStartDateTime());
 
-			DateTime startDate = new DateTime(lancamento.getStartDateTime());
-			DateTime endDate = new DateTime(lancamento.getEndDateTime()); 
+			Integer dia = cal.get(Calendar.YEAR);
+			Integer mes = cal.get(Calendar.MONTH)+1;
+			Integer ano = cal.get(Calendar.DAY_OF_MONTH);
 
-			iniForaDeHora = new DateTime(startDate.getYear(),startDate.getMonthOfYear(),startDate.getDayOfMonth(),06,00);
-			fimForaDeHora = new DateTime(startDate.getYear(),startDate.getMonthOfYear(),startDate.getDayOfMonth(),20,59);
-			//System.err.println(startDate.getDayOfWeek());
-			
-					
-			//VERIFICA SE O LANCAMENTO ESTÁ ENTRE OS DOIS PERIODOS DE HORA NÃO UTEIS
-			if(startDate.isAfter(iniForaDeHora) && (endDate.isBefore(fimForaDeHora))) {
-				periodDentroDeHoraComercial = calculaPeriodoDeHora(startDate,endDate);
-				totalDentroDeHoraComercial = totalHoraUtil();
-				horasNormais = insereZeroAEsquerda(totalDentroDeHoraComercial.getHours(),totalDentroDeHoraComercial.getMinutes());
-			}else {
+			DateTime dtLancamento = new DateTime(dia, mes, ano, 0, 0);
+			Days inicioPeriodo = Days.daysBetween(start,dtLancamento);
+			Days finalPeriodo = Days.daysBetween(end,dtLancamento);
 
-				//INICIA O PERIODO PARA CALCULO ENTRE 21:00 E 23:59
-				iniForaDeHora = new DateTime(startDate.getYear(),startDate.getMonthOfYear(),startDate.getDayOfMonth(),21,0);
-				fimForaDeHora = new DateTime(startDate.getYear(),startDate.getMonthOfYear(),startDate.getDayOfMonth(),23,59);
-
-				System.err.println(startDate);			
-
-				//Se a hora de Inicio do lancamento for após as 21 então considera todo o lancamento como fora do horário
-				if( ((startDate.equals(iniForaDeHora)) || (startDate.isAfter(iniForaDeHora))) && (endDate.isBefore(fimForaDeHora))){
-					periodForaDeHoraComercial = calculaPeriodoDeHora(startDate,endDate);
-					totalForaDeHoraComercial = totalHoraNaoUtil();
-					horasAposHorario = insereZeroAEsquerda(totalForaDeHoraComercial.getHours(),totalForaDeHoraComercial.getMinutes());
-				}
-
-				//Se o horario de inicio do lançamento for anterior as 21h mas o horário de saída passa das 21h então calcula hora normal e hora não util.
-				if( (startDate.isBefore(iniForaDeHora)) && (endDate.isAfter(iniForaDeHora))){
-
-					//Pega do tempo inicial até o inicio do período fora do horario Ex.:21h essas são as horas normais
-					periodDentroDeHoraComercial = calculaPeriodoDeHora(startDate,iniForaDeHora);
-					totalDentroDeHoraComercial = totalHoraUtil();
-					horasNormais = insereZeroAEsquerda(periodDentroDeHoraComercial.getHours(),periodDentroDeHoraComercial.getMinutes());
-
-					//Pega do inicio do periodo fora do horário comercial até o tempo final
-					periodForaDeHoraComercial = calculaPeriodoDeHora(iniForaDeHora,endDate);
-					totalForaDeHoraComercial = totalHoraNaoUtil();
-					horasAposHorario = insereZeroAEsquerda(totalForaDeHoraComercial.getHours(),totalForaDeHoraComercial.getMinutes());
-				}
-
-				//INICIA CALCULO ENTRE 00:00 até 05:59
-				fimForaDeHora = new DateTime(startDate.getYear(),startDate.getMonthOfYear(),startDate.getDayOfMonth(),5,59);
-				iniForaDeHora = new DateTime(startDate.getYear(),startDate.getMonthOfYear(),startDate.getDayOfMonth(),0,0);
-
-				if(startDate.isBefore(fimForaDeHora) && ((endDate.equals(fimForaDeHora)) || endDate.isBefore(fimForaDeHora))) {
-					periodForaDeHoraComercial = calculaPeriodoDeHora(startDate,endDate);
-					totalForaDeHoraComercial = totalHoraNaoUtil();
-					horasAposHorario = insereZeroAEsquerda(totalForaDeHoraComercial.getHours(),totalForaDeHoraComercial.getMinutes());
-				}
-
-				if(startDate.isBefore(fimForaDeHora) && (endDate.isAfter(fimForaDeHora))) {
-					periodForaDeHoraComercial = calculaPeriodoDeHora(startDate,fimForaDeHora);
-					totalForaDeHoraComercial = totalHoraNaoUtil();
-					horasAposHorario = insereZeroAEsquerda(periodForaDeHoraComercial.getHours(),periodForaDeHoraComercial.getMinutes());
-
-					//Pega do inicio do periodo fora do horário comercial até o tempo final
-					periodDentroDeHoraComercial = calculaPeriodoDeHora(fimForaDeHora,endDate);
-					totalDentroDeHoraComercial = totalHoraUtil();
-					horasNormais = insereZeroAEsquerda(totalDentroDeHoraComercial.getHours(),totalDentroDeHoraComercial.getMinutes());
+			if((inicioPeriodo.getDays()>=0) && (finalPeriodo.getDays()<=0)){
+				if(lancamento != null) {
+				calculaHoraForaDeHorarioComercial(lancamento);
 				}
 			}
-
 		});
 
-
-		System.out.println("_______________TOTAL REAL FINAL____________________");
-		System.out.println("HORAS UTIL " + horasNormais); 
-		System.out.println("HORAS Ñ UTIL " + horasAposHorario);	
-		System.out.println("___________________________________");	} 
-
-	private Period totalHoraUtil() {
-		return totalDentroDeHoraComercial.plus(periodDentroDeHoraComercial);
 	}
 
-	private Period totalHoraNaoUtil() {
-		return totalForaDeHoraComercial.plus(periodForaDeHoraComercial);
-	}
 
-	public Period calculaPeriodoDeHora(DateTime inicioPeriodo,DateTime finalPeriodo) {
-		return new Period(new Interval(inicioPeriodo,finalPeriodo));
+	
+	public void calculaHoraForaDeHorarioComercial(Timesheet lancamento){
+			System.err.println(lancamento);
+			Interval totalHoraNaoUtil = null;
+			Interval totalHoraUtil = null;
+
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(lancamento.getStartDateTime());
+
+			Integer anoCorrente = cal.get(Calendar.YEAR);
+			Integer mesCorrente = cal.get(Calendar.MONTH)+1;
+			Integer diaCorrente = cal.get(Calendar.DAY_OF_MONTH);
+
+			DateTime inicioDia = new DateTime(anoCorrente, mesCorrente, diaCorrente, 0, 0);
+			DateTime inicioUtil = new DateTime(anoCorrente, mesCorrente, diaCorrente, 6, 0);
+			DateTime inicioNoite = new DateTime(anoCorrente,mesCorrente, diaCorrente, 21, 0);
+			DateTime finalNoite = new DateTime(anoCorrente, mesCorrente,diaCorrente, 23, 59);
+
+			DateTime startDT = new DateTime(lancamento.getStartDateTime());
+			DateTime endDT = new DateTime(lancamento.getEndDateTime());
+
+			Interval iManha = new Interval(inicioDia.getMillis(), inicioUtil.getMillis());
+			Interval iUtil = new Interval(inicioUtil.getMillis(), inicioNoite.getMillis());
+			Interval iNoite = new Interval(inicioNoite.getMillis(), finalNoite.getMillis());
+
+			Interval i = new Interval(startDT.getMillis(), endDT.getMillis());
+
+			if (iManha.overlaps(i)) {
+				totalHoraNaoUtil = iManha.overlap(i);
+			}
+			if (iUtil.overlaps(i)) {
+				totalHoraUtil = iUtil.overlap(i);
+			}
+			if (iNoite.overlaps(i)) {
+				totalHoraNaoUtil = iNoite.overlap(i);
+			}
+			System.out.println("totalHoraNaoUtil " + formataHora(totalHoraNaoUtil.toPeriod().getHours(), totalHoraNaoUtil.toPeriod().getMinutes())); 
+			System.out.println("horaUteis "+ formataHora(totalHoraUtil.toPeriod().getHours(), totalHoraUtil.toPeriod().getMinutes()));	
+		
 	}
 
 	public Timesheet save(Timesheet obj) {
@@ -137,7 +106,7 @@ public class TimesheetServiceImpl implements TimesheetService{
 
 		//Formata o lancamento para padrão de hora
 		String strTime = interval.toPeriod().getHours()+":"+interval.toPeriod().getMinutes();
-		strTime = insereZeroAEsquerda(interval.toPeriod().getHours(),interval.toPeriod().getMinutes());
+		strTime = formataHora(interval.toPeriod().getHours(),interval.toPeriod().getMinutes());
 
 		obj.setTotalTime(strTime);
 		log.info("Persistindo Timesheet: {}", obj);
@@ -190,9 +159,7 @@ public class TimesheetServiceImpl implements TimesheetService{
 	}
 
 
-
-	@Override
-	public String insereZeroAEsquerda(Integer horas, Integer minutos){
+	public String formataHora(Integer horas, Integer minutos){
 		String horaFormatada = "";
 		if (horas< 10){
 			horaFormatada = "0"+horas+":";

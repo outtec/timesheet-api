@@ -28,10 +28,6 @@ public class Timesheet implements Serializable{
 	@JoinColumn(name = "collaborator_id")
 	private Collaborator collaborator;
 
-	public Timesheet(){
-
-	}
-
 	public Collaborator getCollaborator() {
 		return collaborator;
 	}

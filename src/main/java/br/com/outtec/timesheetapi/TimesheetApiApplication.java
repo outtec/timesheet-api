@@ -1,5 +1,6 @@
 package br.com.outtec.timesheetapi;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -22,17 +23,24 @@ public class TimesheetApiApplication {
 
 	@Autowired
 	TimesheetService service;
-
-
+	
+	//"2018-09-05 21:00:00"
 	Long ID = 153L;
-
+	DateTime start = new DateTime(2018,9,5,0,0); 
+	DateTime end = new DateTime(2018,9,8,0,0); 
 
 	@Bean
 	public CommandLineRunner commandLineRunner() {
 		return args -> {
-		
-		service.calculaHoraForaDeHorarioComercial(ID);
+
+
+		service.getTimesheetsPorPeriodo(ID, start, end);
+
+		//service.calculaHoraForaDeHorarioComercial(ID);
+		//service.calculaHoraForaDeHorarioComercial(ID);
 		//service.calculaHoraForaDeHorarioComercial(ID,21,23);
+			
+
 
 		};
 	}
