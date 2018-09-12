@@ -1,8 +1,6 @@
 package br.com.outtec.timesheetapi.dtos;
 
 import java.util.Optional;
-import org.hibernate.validator.constraints.Length;
-import org.joda.time.Hours;
 
 
 public class TimesheetDto {
@@ -15,7 +13,24 @@ public class TimesheetDto {
 	private String periodDescription;
 	private Long collaboratorId;
 	private String totalTime;
-	
+	private String timeUtil;
+	private String timeNormal;
+
+	public String getTimeUtil() {
+		return timeUtil;
+	}
+
+	public void setTimeUtil(String timeUtil) {
+		this.timeUtil = timeUtil;
+	}
+
+	public String getTimeNormal() {
+		return timeNormal;
+	}
+
+	public void setTimeNormal(String timeNormal) {
+		this.timeNormal = timeNormal;
+	}
 
 	public String getTotalTime() {
 		return totalTime;

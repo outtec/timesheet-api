@@ -75,7 +75,7 @@ public interface TimesheetService {
 	 * @param end
 	 * @return 
 	 */
-	public void getTimesheetsPorPeriodo(Long collaborator_id, DateTime start,DateTime end);
+	public List<Timesheet> getTimesheetsPorPeriodo(Long collaborator_id, DateTime start,DateTime end);
 	
 
 	

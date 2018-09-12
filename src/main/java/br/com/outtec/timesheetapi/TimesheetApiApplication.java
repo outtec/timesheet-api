@@ -27,18 +27,13 @@ public class TimesheetApiApplication {
 	//"2018-09-05 21:00:00"
 	Long ID = 153L;
 	DateTime start = new DateTime(2018,9,5,0,0); 
-	DateTime end = new DateTime(2018,9,8,0,0); 
+	DateTime end = new DateTime(2018,9,8,0,0);
 
 	@Bean
 	public CommandLineRunner commandLineRunner() {
 		return args -> {
 
-
-		service.getTimesheetsPorPeriodo(ID, start, end);
-
-		//service.calculaHoraForaDeHorarioComercial(ID);
-		//service.calculaHoraForaDeHorarioComercial(ID);
-		//service.calculaHoraForaDeHorarioComercial(ID,21,23);
+		System.out.println(service.getTimesheetsPorPeriodo(ID, start, end).toString());
 			
 
 

@@ -1,7 +1,9 @@
 package br.com.outtec.timesheetapi.services.impl;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,72 +30,68 @@ public class TimesheetServiceImpl implements TimesheetService{
 
 	@Autowired
 	private TimesheetRepository repo;
-
-
-	public void getTimesheetsPorPeriodo(Long collaborator_id, DateTime start,DateTime end){
+	
+	
+	/**
+	 * Retorna uma lista de timesheets por periodo.
+	 */
+	public List<Timesheet> getTimesheetsPorPeriodo(Long collaborator_id, DateTime dataInicioPeriodo,DateTime dataFimPeriodo){
+		List<Timesheet> lancamentosPorPeriodo = new ArrayList<Timesheet>(); 
 		List<Timesheet> lancamentos = this.repo.findByCollaboratorId(collaborator_id);
-		lancamentos.stream().forEach(lancamento ->{ 
-			int i = 0;
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(lancamento.getStartDateTime());
-
-			Integer dia = cal.get(Calendar.YEAR);
-			Integer mes = cal.get(Calendar.MONTH)+1;
-			Integer ano = cal.get(Calendar.DAY_OF_MONTH);
-
-			DateTime dtLancamento = new DateTime(dia, mes, ano, 0, 0);
-			Days inicioPeriodo = Days.daysBetween(start,dtLancamento);
-			Days finalPeriodo = Days.daysBetween(end,dtLancamento);
-
+		for (Iterator<Timesheet> i = lancamentos.iterator(); i.hasNext();) {
+			Timesheet timesheet = (Timesheet) i.next();
+			DateTime dataLancamento = convertToDateTimeAndSetPeriod(convertToCalendarInstance(timesheet.getStartDateTime()),0,0);
+			Days inicioPeriodo = Days.daysBetween(dataInicioPeriodo,dataLancamento);
+			Days finalPeriodo = Days.daysBetween(dataFimPeriodo,dataLancamento);
 			if((inicioPeriodo.getDays()>=0) && (finalPeriodo.getDays()<=0)){
-				if(lancamento != null) {
-				calculaHoraForaDeHorarioComercial(lancamento);
-				}
+				lancamentosPorPeriodo.add(timesheet);
 			}
-		});
-
+		}
+		return lancamentosPorPeriodo;
 	}
 
+	private DateTime convertToDateTimeAndSetPeriod(Calendar objCalendar,Integer inicioPeriodo, Integer finalPeiodo) {
+		return new DateTime(objCalendar.get(Calendar.YEAR), objCalendar.get(Calendar.MONTH)+1, objCalendar.get(Calendar.DAY_OF_MONTH), inicioPeriodo,finalPeiodo);
+	}
 
-	
+	private Calendar convertToCalendarInstance(Date data){
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(data);
+		return cal;
+	}
+
 	public void calculaHoraForaDeHorarioComercial(Timesheet lancamento){
-			System.err.println(lancamento);
-			Interval totalHoraNaoUtil = null;
-			Interval totalHoraUtil = null;
+		System.err.println(lancamento);
+		Interval totalHoraNaoUtil = null;
+		Interval totalHoraUtil = null;
 
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(lancamento.getStartDateTime());
+		DateTime inicioDia = convertToDateTimeAndSetPeriod(convertToCalendarInstance(lancamento.getStartDateTime()),0,0);
+		DateTime inicioUtil = convertToDateTimeAndSetPeriod(convertToCalendarInstance(lancamento.getStartDateTime()),6,0);
+		DateTime inicioNoite = convertToDateTimeAndSetPeriod(convertToCalendarInstance(lancamento.getStartDateTime()),21,0);
+		DateTime finalNoite = convertToDateTimeAndSetPeriod(convertToCalendarInstance(lancamento.getStartDateTime()),23,59);
 
-			Integer anoCorrente = cal.get(Calendar.YEAR);
-			Integer mesCorrente = cal.get(Calendar.MONTH)+1;
-			Integer diaCorrente = cal.get(Calendar.DAY_OF_MONTH);
+		DateTime startDT = new DateTime(lancamento.getStartDateTime());
+		DateTime endDT = new DateTime(lancamento.getEndDateTime());
 
-			DateTime inicioDia = new DateTime(anoCorrente, mesCorrente, diaCorrente, 0, 0);
-			DateTime inicioUtil = new DateTime(anoCorrente, mesCorrente, diaCorrente, 6, 0);
-			DateTime inicioNoite = new DateTime(anoCorrente,mesCorrente, diaCorrente, 21, 0);
-			DateTime finalNoite = new DateTime(anoCorrente, mesCorrente,diaCorrente, 23, 59);
+		Interval iManha = new Interval(inicioDia.getMillis(), inicioUtil.getMillis());
+		Interval iUtil = new Interval(inicioUtil.getMillis(), inicioNoite.getMillis());
+		Interval iNoite = new Interval(inicioNoite.getMillis(), finalNoite.getMillis());
 
-			DateTime startDT = new DateTime(lancamento.getStartDateTime());
-			DateTime endDT = new DateTime(lancamento.getEndDateTime());
+		Interval i = new Interval(startDT.getMillis(), endDT.getMillis());
 
-			Interval iManha = new Interval(inicioDia.getMillis(), inicioUtil.getMillis());
-			Interval iUtil = new Interval(inicioUtil.getMillis(), inicioNoite.getMillis());
-			Interval iNoite = new Interval(inicioNoite.getMillis(), finalNoite.getMillis());
-
-			Interval i = new Interval(startDT.getMillis(), endDT.getMillis());
-
-			if (iManha.overlaps(i)) {
-				totalHoraNaoUtil = iManha.overlap(i);
-			}
-			if (iUtil.overlaps(i)) {
-				totalHoraUtil = iUtil.overlap(i);
-			}
-			if (iNoite.overlaps(i)) {
-				totalHoraNaoUtil = iNoite.overlap(i);
-			}
-			System.out.println("totalHoraNaoUtil " + formataHora(totalHoraNaoUtil.toPeriod().getHours(), totalHoraNaoUtil.toPeriod().getMinutes())); 
-			System.out.println("horaUteis "+ formataHora(totalHoraUtil.toPeriod().getHours(), totalHoraUtil.toPeriod().getMinutes()));	
-		
+		if (iManha.overlaps(i)) {
+			totalHoraNaoUtil = iManha.overlap(i);
+		}
+		if (iUtil.overlaps(i)) {
+			totalHoraUtil = iUtil.overlap(i);
+		}
+		if (iNoite.overlaps(i)) {
+			totalHoraNaoUtil = iNoite.overlap(i);
+		}
+		lancamento.setUtilTime(formataHora(totalHoraNaoUtil.toPeriod().getHours(), totalHoraNaoUtil.toPeriod().getMinutes()));
+		lancamento.setNormalTime(formataHora(totalHoraUtil.toPeriod().getHours(), totalHoraUtil.toPeriod().getMinutes()));
+//		System.out.println("totalHoraNaoUtil " + formataHora(totalHoraNaoUtil.toPeriod().getHours(), totalHoraNaoUtil.toPeriod().getMinutes())); 
+//		System.out.println("horaUteis "+ formataHora(totalHoraUtil.toPeriod().getHours(), totalHoraUtil.toPeriod().getMinutes()));		
 	}
 
 	public Timesheet save(Timesheet obj) {
