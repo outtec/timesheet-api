@@ -1,7 +1,5 @@
 package br.com.outtec.timesheetapi.services.impl;
 
-import static org.hamcrest.CoreMatchers.any;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
