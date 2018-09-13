@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.joda.time.DateTime;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
@@ -38,7 +39,7 @@ public interface TimesheetService {
 	void delete(Long id);
 	
 	/**
-	 * Return Timehseets by Collaborator Paginado
+	 * Return Timehseets by Collaborator Paginando
 	 * @param id
 	 * @return
 	 */
@@ -65,13 +66,26 @@ public interface TimesheetService {
 	 * @return A list of timessheets by Day
 	 */
 	Page<Timesheet> findByCollaboratorIdAndStarDateTime(Long id, Date startDateTime,PageRequest pageRequest);
+	
 
-	String insereZeroAEsquerda(Integer horas, Integer minutos);
+	/**
+	 * 
+	 * @param collaborator_id
+	 * @param start
+	 * @param end
+	 * @return 
+	 */
+	public List<Timesheet> getTimesheetsPorPeriodo(Long collaborator_id, DateTime start,DateTime end);
+	
 	
 	/**
 	 * 
 	 * @param collaborator_id
+	 * @param start
+	 * @param end
+	 * @return 
 	 */
-	public void calculaHoraForaDeHorarioComercial(Long collaborator_id);
+	public List<Timesheet> getTimesheetsByPeriod(Long collaborator_id, Date start,Date end);
+	
 	
 }

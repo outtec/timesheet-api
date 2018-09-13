@@ -2,9 +2,16 @@ package br.com.outtec.timesheetapi.domain;
 
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.*;
 
-import org.joda.time.Hours;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 
 @Entity
 public class Timesheet implements Serializable{
@@ -23,14 +30,25 @@ public class Timesheet implements Serializable{
 	private Date dataAtualizacao;
 	private Date dataCriacao;
 	private String totalTime;
+	private String extraTime;
+	private String normalTime;
 	
+	public String getExtraTime() {
+		return extraTime;
+	}
+	public void setExtraTime(String extraTime) {
+		this.extraTime = extraTime;
+	}
+	public String getNormalTime() {
+		return normalTime;
+	}
+	public void setNormalTime(String normalTime) {
+		this.normalTime = normalTime;
+	}
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "collaborator_id")
 	private Collaborator collaborator;
-
-	public Timesheet(){
-
-	}
 
 	public Collaborator getCollaborator() {
 		return collaborator;
