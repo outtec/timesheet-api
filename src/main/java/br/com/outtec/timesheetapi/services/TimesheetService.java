@@ -77,6 +77,15 @@ public interface TimesheetService {
 	 */
 	public List<Timesheet> getTimesheetsPorPeriodo(Long collaborator_id, DateTime start,DateTime end);
 	
-
+	
+	/**
+	 * 
+	 * @param collaborator_id
+	 * @param start
+	 * @param end
+	 * @return 
+	 */
+	public List<Timesheet> getTimesheetsByPeriod(Long collaborator_id, Date start,Date end);
+	
 	
 }

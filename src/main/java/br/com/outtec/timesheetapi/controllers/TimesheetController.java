@@ -47,7 +47,14 @@ public class TimesheetController {
 	private int qtdPorPagina;
 
 	public TimesheetController() {}
-
+	/**
+	 * 
+	 * @param collaboratorId
+	 * @param pag
+	 * @param ord
+	 * @param dir
+	 * @return
+	 */
 	@RequestMapping(method=RequestMethod.GET)
 	public ResponseEntity<Response<Page<TimesheetDto>>> getTimesheetsByCollaboratorId(
 			@RequestParam(value = "collaboratorid") long collaboratorId,
@@ -63,7 +70,7 @@ public class TimesheetController {
 		return ResponseEntity.ok(response);
 	}
 	
-
+		
 	/**
 	 * Retorna uma entrada cadastrada por ID
 	 * @param id

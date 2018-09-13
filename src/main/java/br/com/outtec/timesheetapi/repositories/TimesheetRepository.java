@@ -42,4 +42,8 @@ public interface TimesheetRepository extends JpaRepository<Timesheet,Long>  {
 	List<Timesheet> findByCollaboratorIdAndStartDateTime(Long collaboratorId, Date startDateTime);
 	
 	List<Timesheet> findByStartDateTime(Date startDateTime);
+	
+	List<Timesheet> findByStartDateTimeBetween(Date startDateTime, Date endDateTime);
+	
+
 }

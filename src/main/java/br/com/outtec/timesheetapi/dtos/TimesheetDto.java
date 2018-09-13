@@ -13,25 +13,9 @@ public class TimesheetDto {
 	private String periodDescription;
 	private Long collaboratorId;
 	private String totalTime;
-	private String timeUtil;
-	private String timeNormal;
-
-	public String getTimeUtil() {
-		return timeUtil;
-	}
-
-	public void setTimeUtil(String timeUtil) {
-		this.timeUtil = timeUtil;
-	}
-
-	public String getTimeNormal() {
-		return timeNormal;
-	}
-
-	public void setTimeNormal(String timeNormal) {
-		this.timeNormal = timeNormal;
-	}
-
+	private String extraTime;
+	private String normalTime;
+	
 	public String getTotalTime() {
 		return totalTime;
 	}

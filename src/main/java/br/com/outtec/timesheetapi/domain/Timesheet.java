@@ -30,9 +30,22 @@ public class Timesheet implements Serializable{
 	private Date dataAtualizacao;
 	private Date dataCriacao;
 	private String totalTime;
-	private String utilTime;
+	private String extraTime;
 	private String normalTime;
 	
+	public String getExtraTime() {
+		return extraTime;
+	}
+	public void setExtraTime(String extraTime) {
+		this.extraTime = extraTime;
+	}
+	public String getNormalTime() {
+		return normalTime;
+	}
+	public void setNormalTime(String normalTime) {
+		this.normalTime = normalTime;
+	}
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "collaborator_id")
 	private Collaborator collaborator;
@@ -106,18 +119,6 @@ public class Timesheet implements Serializable{
 		this.totalTime = totalTime;
 	}
 
-	public String getUtilTime() {
-		return utilTime;
-	}
-	public void setUtilTime(String utilTime) {
-		this.utilTime = utilTime;
-	}
-	public String getNormalTime() {
-		return normalTime;
-	}
-	public void setNormalTime(String normalTime) {
-		this.normalTime = normalTime;
-	}
 	@PreUpdate
 	public void preUpdate() {
 		setDataAtualizacao(new Date());

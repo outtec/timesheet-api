@@ -1,5 +1,7 @@
 package br.com.outtec.timesheetapi.services.impl;
 
+import static org.hamcrest.CoreMatchers.any;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -31,6 +33,17 @@ public class TimesheetServiceImpl implements TimesheetService{
 	@Autowired
 	private TimesheetRepository repo;
 	
+	/**
+	 * 
+	 * @param collaborator_id
+	 * @param dataInicioPeriodo
+	 * @param dataFimPeriodo
+	 * @return
+	 */
+	public List<Timesheet> getTimesheetsByPeriod(Long collaborator_id, Date dataInicioPeriodo, Date dataFimPeriodo){
+		log.info("Buscando Timesheets por collaborador: {}", collaborator_id );
+		return repo.findByStartDateTimeBetween(dataInicioPeriodo, dataFimPeriodo);
+	}
 	
 	/**
 	 * Retorna uma lista de timesheets por periodo.
@@ -61,7 +74,6 @@ public class TimesheetServiceImpl implements TimesheetService{
 	}
 
 	public void calculaHoraForaDeHorarioComercial(Timesheet lancamento){
-		System.err.println(lancamento);
 		Interval totalHoraNaoUtil = null;
 		Interval totalHoraUtil = null;
 
@@ -69,14 +81,12 @@ public class TimesheetServiceImpl implements TimesheetService{
 		DateTime inicioUtil = convertToDateTimeAndSetPeriod(convertToCalendarInstance(lancamento.getStartDateTime()),6,0);
 		DateTime inicioNoite = convertToDateTimeAndSetPeriod(convertToCalendarInstance(lancamento.getStartDateTime()),21,0);
 		DateTime finalNoite = convertToDateTimeAndSetPeriod(convertToCalendarInstance(lancamento.getStartDateTime()),23,59);
-
 		DateTime startDT = new DateTime(lancamento.getStartDateTime());
 		DateTime endDT = new DateTime(lancamento.getEndDateTime());
 
 		Interval iManha = new Interval(inicioDia.getMillis(), inicioUtil.getMillis());
 		Interval iUtil = new Interval(inicioUtil.getMillis(), inicioNoite.getMillis());
 		Interval iNoite = new Interval(inicioNoite.getMillis(), finalNoite.getMillis());
-
 		Interval i = new Interval(startDT.getMillis(), endDT.getMillis());
 
 		if (iManha.overlaps(i)) {
@@ -88,10 +98,17 @@ public class TimesheetServiceImpl implements TimesheetService{
 		if (iNoite.overlaps(i)) {
 			totalHoraNaoUtil = iNoite.overlap(i);
 		}
-		lancamento.setUtilTime(formataHora(totalHoraNaoUtil.toPeriod().getHours(), totalHoraNaoUtil.toPeriod().getMinutes()));
-		lancamento.setNormalTime(formataHora(totalHoraUtil.toPeriod().getHours(), totalHoraUtil.toPeriod().getMinutes()));
-//		System.out.println("totalHoraNaoUtil " + formataHora(totalHoraNaoUtil.toPeriod().getHours(), totalHoraNaoUtil.toPeriod().getMinutes())); 
-//		System.out.println("horaUteis "+ formataHora(totalHoraUtil.toPeriod().getHours(), totalHoraUtil.toPeriod().getMinutes()));		
+
+		try {
+
+			lancamento.setExtraTime(formataHora(totalHoraNaoUtil.toPeriod().getHours(), totalHoraNaoUtil.toPeriod().getMinutes()));
+			lancamento.setNormalTime(formataHora(totalHoraUtil.toPeriod().getHours(), totalHoraUtil.toPeriod().getMinutes()));
+			System.out.println("totalHoraNaoUtil " + formataHora(totalHoraNaoUtil.toPeriod().getHours(), totalHoraNaoUtil.toPeriod().getMinutes())); 
+			System.out.println("horaUteis "+ formataHora(totalHoraUtil.toPeriod().getHours(), totalHoraUtil.toPeriod().getMinutes()));		
+
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 	}
 
 	public Timesheet save(Timesheet obj) {
@@ -105,8 +122,12 @@ public class TimesheetServiceImpl implements TimesheetService{
 		//Formata o lancamento para padrão de hora
 		String strTime = interval.toPeriod().getHours()+":"+interval.toPeriod().getMinutes();
 		strTime = formataHora(interval.toPeriod().getHours(),interval.toPeriod().getMinutes());
-
 		obj.setTotalTime(strTime);
+
+		//Calcula hora extra
+		if(obj.getEndDateTime() != null) {
+			calculaHoraForaDeHorarioComercial(obj);
+		}
 		log.info("Persistindo Timesheet: {}", obj);
 		return this.repo.save(obj); 
 	} 
