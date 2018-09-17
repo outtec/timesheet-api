@@ -2,7 +2,9 @@ package br.com.outtec.timesheetapi.controllers;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -65,6 +67,23 @@ public class TimesheetController {
 		Response<Page<TimesheetDto>> response = new Response<Page<TimesheetDto>>();
 		PageRequest pageRequest = new PageRequest(pag, this.qtdPorPagina,Direction.valueOf(dir), ord);
 		Page<Timesheet> timesheets = this.timesheetService.findByCollaboratorId(collaboratorId, pageRequest);
+		Page<TimesheetDto> timesheetDto = timesheets.map(timesheet -> this.converterTimesheetParaDto(timesheet));
+		response.setData(timesheetDto);
+		return ResponseEntity.ok(response);
+	}
+	
+	@RequestMapping(method=RequestMethod.GET)
+	public ResponseEntity<Response<Page<TimesheetDto>>> getTimesheetsByPeriod(
+			@RequestParam(value = "collaboratorid") long collaboratorId,
+			@RequestParam(value = "startDate") Date dateStart,
+			@RequestParam(value = "endDate") Date dateEnd,
+			@RequestParam(value = "pag", defaultValue = "0") int pag,
+			@RequestParam(value = "ord", defaultValue = "id") String ord,
+			@RequestParam(value = "dir", defaultValue = "DESC") String dir){
+		log.info("Buscando lançamentos por ID do colaborador: {}, página: {}", collaboratorId, dateStart,dateEnd,pag);
+		Response<Page<TimesheetDto>> response = new Response<Page<TimesheetDto>>();
+		PageRequest pageRequest = new PageRequest(pag, this.qtdPorPagina,Direction.valueOf(dir), ord);
+		Page<Timesheet> timesheets = this.timesheetService.getTimesheetsByPeriod(collaboratorId, dateStart,dateEnd,pageRequest);
 		Page<TimesheetDto> timesheetDto = timesheets.map(timesheet -> this.converterTimesheetParaDto(timesheet));
 		response.setData(timesheetDto);
 		return ResponseEntity.ok(response);

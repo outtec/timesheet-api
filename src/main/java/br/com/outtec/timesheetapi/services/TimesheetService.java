@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import org.joda.time.DateTime;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
@@ -66,7 +65,6 @@ public interface TimesheetService {
 	 * @return A list of timessheets by Day
 	 */
 	Page<Timesheet> findByCollaboratorIdAndStarDateTime(Long id, Date startDateTime,PageRequest pageRequest);
-	
 
 	/**
 	 * 
@@ -75,17 +73,8 @@ public interface TimesheetService {
 	 * @param end
 	 * @return 
 	 */
-	public List<Timesheet> getTimesheetsPorPeriodo(Long collaborator_id, DateTime start,DateTime end);
-	
-	
-	/**
-	 * 
-	 * @param collaborator_id
-	 * @param start
-	 * @param end
-	 * @return 
-	 */
-	public List<Timesheet> getTimesheetsByPeriod(Long collaborator_id, Date start,Date end);
+	 Page<Timesheet> getTimesheetsByPeriod(Long collaborator_id, Date start,Date end,PageRequest pageRequest);
+
 	
 	
 }

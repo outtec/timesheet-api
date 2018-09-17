@@ -20,8 +20,8 @@ import br.com.outtec.timesheetapi.domain.Timesheet;
 
 @NamedQueries({
 	@NamedQuery(name = "TimesheetRepository.findByCollaboratorId", 
-			query = "SELECT ts FROM Timesheet ts WHERE ts.collaborator.id = :collaboratorId")	
-	})
+			query = "SELECT ts FROM Timesheet ts WHERE ts.collaborator.id = :collaboratorId")
+})
 
 public interface TimesheetRepository extends JpaRepository<Timesheet,Long>  {
 
@@ -43,7 +43,8 @@ public interface TimesheetRepository extends JpaRepository<Timesheet,Long>  {
 	
 	List<Timesheet> findByStartDateTime(Date startDateTime);
 	
-	List<Timesheet> findByStartDateTimeBetween(Date startDateTime, Date endDateTime);
+	@Transactional(readOnly=true)
+	Page<Timesheet> findByCollaboratorIdAndStartDateTimeBetween(Long collaborator_id,Date startDate, Date endDate,Pageable pegeable);
 	
 
 }
