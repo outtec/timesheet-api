@@ -2,13 +2,13 @@ package br.com.outtec.timesheetapi.controllers;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,18 +72,32 @@ public class TimesheetController {
 		return ResponseEntity.ok(response);
 	}
 	
-	@RequestMapping(method=RequestMethod.GET)
+	@RequestMapping(value="/period",method=RequestMethod.GET)
 	public ResponseEntity<Response<Page<TimesheetDto>>> getTimesheetsByPeriod(
 			@RequestParam(value = "collaboratorid") long collaboratorId,
-			@RequestParam(value = "startDate") Date dateStart,
-			@RequestParam(value = "endDate") Date dateEnd,
+			@RequestParam(value = "startDate") String dateStart,
+			@RequestParam(value = "endDate") String dateEnd,
 			@RequestParam(value = "pag", defaultValue = "0") int pag,
 			@RequestParam(value = "ord", defaultValue = "id") String ord,
 			@RequestParam(value = "dir", defaultValue = "DESC") String dir){
-		log.info("Buscando lançamentos por ID do colaborador: {}, página: {}", collaboratorId, dateStart,dateEnd,pag);
+		
+		int DATES = Integer.parseInt(dateStart.substring(0, 2));
+		int MONTHS = Integer.parseInt(dateStart.substring(3, 5));
+		int YEARS = Integer.parseInt(dateStart.substring(6, 10));
+		
+		int DATEE = Integer.parseInt(dateEnd.substring(0, 2));
+		int MONTHE = Integer.parseInt(dateEnd.substring(3, 5));
+		int YEARE = Integer.parseInt(dateEnd.substring(6, 10));
+		
+		DateTime start = new DateTime(YEARS,MONTHS,DATES-1,0,0); 
+		
+		DateTime end = new DateTime(YEARE,MONTHE,DATEE+1,0,0);
+		
+		
+		log.info("Buscando lançamentos por Periodo: {}, period: {}", collaboratorId, start,end, pag);
 		Response<Page<TimesheetDto>> response = new Response<Page<TimesheetDto>>();
 		PageRequest pageRequest = new PageRequest(pag, this.qtdPorPagina,Direction.valueOf(dir), ord);
-		Page<Timesheet> timesheets = this.timesheetService.getTimesheetsByPeriod(collaboratorId, dateStart,dateEnd,pageRequest);
+		Page<Timesheet> timesheets = this.timesheetService.getTimesheetsByPeriod(collaboratorId, start.toDate(),end.toDate(),pageRequest);
 		Page<TimesheetDto> timesheetDto = timesheets.map(timesheet -> this.converterTimesheetParaDto(timesheet));
 		response.setData(timesheetDto);
 		return ResponseEntity.ok(response);

@@ -1,5 +1,6 @@
 package br.com.outtec.timesheetapi.repositories;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -44,7 +45,7 @@ public interface TimesheetRepository extends JpaRepository<Timesheet,Long>  {
 	List<Timesheet> findByStartDateTime(Date startDateTime);
 	
 	@Transactional(readOnly=true)
-	Page<Timesheet> findByCollaboratorIdAndStartDateTimeBetween(Long collaborator_id,Date startDate, Date endDate,Pageable pegeable);
+	Page<Timesheet> findByCollaboratorIdAndStartDateTimeBetween(Long collaborator_id,Date dataInicioPeriodo, Date dataFimPeriodo,Pageable pegeable);
 	
 
 }

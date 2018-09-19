@@ -30,6 +30,7 @@ public class TimesheetServiceImpl implements TimesheetService{
 	
 
 	public Page<Timesheet> getTimesheetsByPeriod(Long collaborator_id, Date dataInicioPeriodo, Date dataFimPeriodo, PageRequest pageRequest){
+		
 		log.info("Buscando Timesheets por collaborador: {}", collaborator_id );
 		return repo.findByCollaboratorIdAndStartDateTimeBetween(collaborator_id,dataInicioPeriodo, dataFimPeriodo,pageRequest);
 	}
