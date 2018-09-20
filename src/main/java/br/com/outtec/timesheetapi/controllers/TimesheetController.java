@@ -2,7 +2,6 @@ package br.com.outtec.timesheetapi.controllers;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
 
@@ -61,7 +60,7 @@ public class TimesheetController {
 	public ResponseEntity<Response<Page<TimesheetDto>>> getTimesheetsByCollaboratorId(
 			@RequestParam(value = "collaboratorid") long collaboratorId,
 			@RequestParam(value = "pag", defaultValue = "0") int pag,
-			@RequestParam(value = "ord", defaultValue = "id") String ord,
+			@RequestParam(value = "ord", defaultValue = "startDateTime") String ord,
 			@RequestParam(value = "dir", defaultValue = "DESC") String dir){
 		log.info("Buscando lançamentos por ID do colaborador: {}, página: {}", collaboratorId, pag);
 		Response<Page<TimesheetDto>> response = new Response<Page<TimesheetDto>>();
@@ -78,19 +77,18 @@ public class TimesheetController {
 			@RequestParam(value = "startDate") String dateStart,
 			@RequestParam(value = "endDate") String dateEnd,
 			@RequestParam(value = "pag", defaultValue = "0") int pag,
-			@RequestParam(value = "ord", defaultValue = "id") String ord,
+			@RequestParam(value = "ord", defaultValue = "startDateTime") String ord,
 			@RequestParam(value = "dir", defaultValue = "DESC") String dir){
 		
-		int DATES = Integer.parseInt(dateStart.substring(0, 2));
-		int MONTHS = Integer.parseInt(dateStart.substring(3, 5));
-		int YEARS = Integer.parseInt(dateStart.substring(6, 10));
+		int DATES = Integer.parseInt(dateStart.substring(8, 10));
+		int MONTHS = Integer.parseInt(dateStart.substring(5, 7));
+		int YEARS = Integer.parseInt(dateStart.substring(0, 4));
 		
-		int DATEE = Integer.parseInt(dateEnd.substring(0, 2));
-		int MONTHE = Integer.parseInt(dateEnd.substring(3, 5));
-		int YEARE = Integer.parseInt(dateEnd.substring(6, 10));
+		int DATEE = Integer.parseInt(dateEnd.substring(8, 10));
+		int MONTHE = Integer.parseInt(dateEnd.substring(5, 7));
+		int YEARE = Integer.parseInt(dateEnd.substring(0, 4));
 		
-		DateTime start = new DateTime(YEARS,MONTHS,DATES-1,0,0); 
-		
+		DateTime start = new DateTime(YEARS,MONTHS,DATES-1,0,0);
 		DateTime end = new DateTime(YEARE,MONTHE,DATEE+1,0,0);
 		
 		
