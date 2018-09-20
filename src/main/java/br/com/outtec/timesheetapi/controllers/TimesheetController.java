@@ -230,6 +230,8 @@ public class TimesheetController {
 		timesheet.setIsInTravel(timesheetDto.getIsInTravel());
 		timesheet.setPeriodDescription(timesheetDto.getPeriodDescription());
 		timesheet.setTotalTime(timesheetDto.getTotalTime());
+		timesheet.setNormalTime(timesheetDto.getNormalTime());
+		timesheet.setExtraTime(timesheetDto.getExtraTime());
 		return timesheet;
 	}
 
@@ -243,6 +245,8 @@ public class TimesheetController {
 		timesheetDto.setPeriodDescription(timesheet.getPeriodDescription());
 		timesheetDto.setCollaboratorId(timesheet.getCollaborator().getId());
 		timesheetDto.setTotalTime(timesheet.getTotalTime());
+		timesheetDto.setExtraTime(timesheet.getExtraTime());
+		timesheetDto.setNormalTime(timesheet.getNormalTime());
 		return timesheetDto;
 	} 
 

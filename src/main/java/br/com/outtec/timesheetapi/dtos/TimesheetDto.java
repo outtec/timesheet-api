@@ -16,6 +16,24 @@ public class TimesheetDto {
 	private String extraTime;
 	private String normalTime;
 	
+	
+	public String getExtraTime() {
+		return extraTime;
+	}
+
+	public void setExtraTime(String extraTime) {
+		this.extraTime = extraTime;
+	}
+
+	public String getNormalTime() {
+		return normalTime;
+	}
+
+	public void setNormalTime(String normalTime) {
+		this.normalTime = normalTime;
+	}
+
+	
 	public String getTotalTime() {
 		return totalTime;
 	}
